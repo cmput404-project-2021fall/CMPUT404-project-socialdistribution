@@ -4,21 +4,11 @@ import "./index.css";
 import "./bootstrap.min.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-<<<<<<< HEAD
-import Login from "./pages/Login"
-import SignUp from "./pages/SignUp"
-import Homepage from "./pages/Homepage"
-
-ReactDOM.render(
-  <React.StrictMode>
-    <Homepage />
-=======
 import LoginPage from "./pages/LoginPage";
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
->>>>>>> ccbe4cb2dc9d585f46889a252b098d468c81893a
   </React.StrictMode>,
   document.getElementById("root")
 );
