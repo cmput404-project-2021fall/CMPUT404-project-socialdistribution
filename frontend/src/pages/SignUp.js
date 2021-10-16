@@ -5,42 +5,42 @@ function SignUp() {
     return (
     <div className="SignUp">
         <Headers />
-        <div class="signup-wrap">
+        <div class="sign_up_wrap">
             <form id="user_signup" action="">
-                <ol class="title">Creat a new account</ol>
+                <ol class="sign_up_title">Creat a new account</ol>
                 <tr>
-                    <ol class="text">username:</ol>
+                    <ol class="sign_up_text">username:</ol>
                     <td width="100%">
-                        <input class="username_box" name="" id="accountName" type="text"/>
+                        <input class="sign_up_box" name="" id="accountName" type="text"/>
                     </td>
                 </tr>
 
                 <tr>
-                    <ol class="text">email:</ol>
+                    <ol class="sign_up_text">email:</ol>
                     <td width="100%">
-                        <input class="email_box" name="email" id="email" type="text"/>
+                        <input class="sign_up_box" name="email" id="email" type="text"/>
                     </td>
                 </tr>
 
 
                 <tr>
-                    <ol class="text">password:</ol>
+                    <ol class="sign_up_text">password:</ol>
                     <td width="100%">
-                        <input class="password_box" name="password" id="password" type="text"/>
+                        <input class="sign_up_box" name="password" id="password" type="text"/>
                     </td>
                 </tr>
 
                 <tr>
-                    <ol class="text">confirm_password:</ol>
+                    <ol class="sign_up_text">confirm_password:</ol>
                     <td width="100%">
-                        <input class="confirm_password_box" name="confirm_password" id="confirm_password" type="text"/>
+                        <input class="sign_up_box" name="confirm_password" id="confirm_password" type="text"/>
                     </td>
                 </tr>
         
-                <button class="btn" onclick="return check(this.form);">Create account</button>
+                <button class="sign_up_btn" onclick="return check(this.form);">Create account</button>
 
 
-                <div id="CheckMsg" class="msg"></div>
+                <div id="CheckMsg" class="sign_up_msg"></div>
             </form>
         </div>
 

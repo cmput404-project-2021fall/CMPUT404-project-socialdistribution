@@ -6,10 +6,11 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
+import Homepage from "./pages/Homepage"
 
 ReactDOM.render(
   <React.StrictMode>
-    <SignUp/>
+    <SignUp />
   </React.StrictMode>,
   document.getElementById("root")
 );
