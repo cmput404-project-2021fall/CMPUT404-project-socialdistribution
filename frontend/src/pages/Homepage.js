@@ -1,53 +1,58 @@
 import Headers from "../components/Headers";
-import "./Login.css"
+import "./Homepage.css"
 
-function Login() {
+function Homepage() {
     return (
-    <div className="Login">
-        <Headers />
-        <div class="login-wrap">
-            <form id="user_login" action="">
-                <ol class="title">Login Page</ol>
-                <tr>
-                    <ol class="text">username:</ol>
-                    <td width="100%">
-                        <input class="username_box" name="" id="accountName" type="text"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <ol class="text">password:</ol>
-                    <td width="100%">
-                        <input class="password_box" name="password" id="password" type="password"/>
-                    </td>
-                </tr>
-        
-                <button class="btn" onclick="return check(this.form);">login</button>
-
-                {/* <input type="button" id="register" class="register" value="sign up" onclick="return register(this.form);"/> */}
-                {/* <tr>
-                    <ol>sign</ol>
-                    <td input type="button" id="register" class="register" value="sign up" onclick="return register(this.form);">here</td>
-                </tr> */}
-                <p class="new_user_text">
-                    new user? sign up&nbsp;
-                    <a class="btn_register" onclick="return register(this.form);">here</a>
-                </p>
-
-                <div id="CheckMsg" class="msg"></div>
-            </form>
+        <div class="Homepage">
+            <Headers />
+            <div class="tweet">
+            <div class="tweet__column avatar">
+                <img class="avatar__image" src="image.png" />
+            </div>
+            <div class="tweet__column tweet__main">
+                <div class="tweet__main__header">
+                    <div class="tweet__main__header__item tweet__main__header__item--name">
+                        BlahX
+                    </div>
+                    <div class="tweet__main__header__item tweet__main__header__item--badge">
+                        <img class="tweet__icon tweet__main__header__item__badge" src="http://educative.io/udata/nWjylg5XloB/footer_icon.svg"/>
+                    </div>
+                    <div class="tweet__main__header__item tweet__main__header__item--handle">
+                        @blahx
+                    </div>
+                    <div class="tweet__main__header__item tweet__main__header__item--duration">
+                        7h
+                    </div>
+                </div>
+                <div class="tweet__main__message">
+                    Blah blah blah
+                    Blah blah blah
+                    Blah blah blah
+                    Blah blah blah
+                </div>
+                <div class="tweet__footer">
+                    <div class="tweet__footer__stats">
+                        <img class="tweet__icon tweet__footer__stats__item" src="http://educative.io/udata/nWjylg5XloB/footer_icon.svg" />
+                        <div class="tweet__footer__stats__item">
+                            10
+                        </div>
+                    </div>
+                    <div class="tweet__footer__stats">
+                        <img class="tweet__icon tweet__footer__stats__item" src="http://educative.io/udata/nWjylg5XloB/footer_icon.svg" />
+                        <div class="tweet__footer__stats__item">
+                        900
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tweet__menu">
+                <img class="tweet__icon tweet__menu__icon" src="http://educative.io/udata/w66j6pMjng6/down_icon.svg"/>
+            </div>
+            </div>
         </div>
-
-    </div>
   
     );
 }
-export default Login;
+export default Homepage;
 
   
-function check(form){
-    return true;
-}
-function register(form){
-    return true;
-}

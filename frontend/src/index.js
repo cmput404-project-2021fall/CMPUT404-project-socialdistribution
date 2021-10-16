@@ -10,7 +10,7 @@ import Homepage from "./pages/Homepage"
 
 ReactDOM.render(
   <React.StrictMode>
-    <SignUp />
+    <Homepage />
   </React.StrictMode>,
   document.getElementById("root")
 );
