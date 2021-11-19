@@ -31,6 +31,13 @@ ALLOWED_HOSTS = [
     "*"
 ]
 
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+STATIC_ROOT= os.path.join(PROJECT_DIR,'staticfiles/')
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT,'static/'),
+)
+
+
 DJANGO_DEFAULT_HOST = (
     "https://cmput-404-social-distribution.herokuapp.com/"
     if os.getenv("DJANGO_DEFAULT_HOST") is None
