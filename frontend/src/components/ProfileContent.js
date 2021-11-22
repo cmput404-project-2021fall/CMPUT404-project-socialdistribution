@@ -25,18 +25,18 @@ function ProfileContent(props) {
     }
   }, [dispatch, userInfo]);
 
-  console.log(userDetail);
+  //console.log(userDetail);
 
   const view_user_id = props.view_user_id;
-  console.log(view_user_id);
+  //console.log(view_user_id);
 
 
-    // get user list
-    const userList = useSelector((state) => state.userList);
-    useEffect(() => {
-      dispatch(getUsers());
-    }, [dispatch]);
-    console.log(userList.userList);
+  // get user list
+  const userList = useSelector((state) => state.userList);
+  useEffect(() => {
+    dispatch(getUsers());
+  }, [dispatch]);
+  console.log(userList.userList);
 
 
   return (

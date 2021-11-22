@@ -122,16 +122,10 @@ export const getAuthorDetail = () => async (dispatch, getState) => {
       },
     };
 
-    console.log("gethere!");
-    console.log(userInfo.author_id);
-    console.log("start");
-
     const { data } = await axios.get(
       `/api/author/${userInfo.author_id}/`,
       config
     );
-    console.log(data);
-    console.log("jx");
 
     dispatch({
       type: USER_DETAIL_SUCCESS,
