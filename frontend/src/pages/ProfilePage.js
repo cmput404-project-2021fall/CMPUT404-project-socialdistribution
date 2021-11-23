@@ -29,8 +29,7 @@ function ProfilePage(props) {
     }
   }, [history, userInfo]);
 
-  //const view_user_id = props.match.params.id;
-  const view_user_id = props.match.params.id ? props.location.state.user_id:null;
+  const view_user_id = props.match.params.id;
 
   return (
     <Container className="App fluid min-vh-100 min-vw-100 d-flex flex-column p-0">

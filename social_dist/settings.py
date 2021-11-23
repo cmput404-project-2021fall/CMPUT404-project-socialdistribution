@@ -31,7 +31,6 @@ ALLOWED_HOSTS = [
     "*"
 ]
 
-CSRF_COOKIE_AGE=None
 
 DJANGO_DEFAULT_HOST = (
     "https://cmput-404-social-distribution.herokuapp.com/"

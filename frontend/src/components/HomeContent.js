@@ -76,7 +76,15 @@ function HomeContent() {
         </Nav.Item>
       </Nav>
       {tab === 1
-        ? posts.map((p) => <Posts post={p} />)
+        ? posts.map((p) =>
+            userInfo != null ? (
+              <Posts post={p} />
+            ) : p.visibility == "PUBLIC" ? (
+              <Posts post={p} />
+            ) : (
+              ""
+            )
+          )
         : tab === 2
         ? posts.map((p) =>
             p.visibility == "FRIENDS" && !isMyPost(p) ? <Posts post={p} /> : ""
