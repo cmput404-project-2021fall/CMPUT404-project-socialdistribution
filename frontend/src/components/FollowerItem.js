@@ -21,7 +21,7 @@ class FollowerItem extends Component{
         return(
             <Col md="auto">
                 <div className="item">
-                <Card className="m-1" style={{ width: '20rem', border:'groove', borderRadius:'1rem'}}>
+                <Card className="m-1" style={{ width: '23rem', border:'groove', borderRadius:'1rem'}}>
                 <Card.Body>
                     <Col md={6} className="d-flex">
                         <Image src={Avatar} className="m-0"
@@ -29,8 +29,19 @@ class FollowerItem extends Component{
 
                         <Row>
                         <div className="d-flex" style={{marginTop:"1rem"}}>
+
+                        <LinkContainer
+                        to={{
+                            pathname: "/profile/" + this.props.item.display_name,
+                            // state: { user_id: user_id },
+                        }}
+                        style={{ fontSize: "1.5rem" }}
+                        >
                         <Card.Title>{this.props.item.display_name}</Card.Title>
+                        </LinkContainer>
+
                         <Card.Subtitle className="mb-2 text-muted">@{this.props.item.display_name}</Card.Subtitle>
+
                         </div>
                         <LinkContainer to={"/"}>
                         <div>
