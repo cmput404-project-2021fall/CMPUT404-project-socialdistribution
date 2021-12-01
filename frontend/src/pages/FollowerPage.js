@@ -14,10 +14,10 @@ function NotificationPage() {
     // const [requestor, setRequestor] = useState("");
     // const [requestee, setAuthor] = useState(""); // this is the author
     
-    const items = [
-        {requestor:"", display_name: "TestUser1"},
-        {requestor:"", display_name: "TestUser2"},
-    ]
+    var items = [];
+    for (var i=1;i<=10;i++){
+        items.push({requestor:"", display_name: "TestUser"+i.toString()});
+    }
     var itemList = []
     for(let item of items){
         itemList.push(<FollowerItem item={item}/>)
@@ -31,13 +31,16 @@ function NotificationPage() {
             <Col className="bg-secondary col-md-2 border">
                 <SideBar />
             </Col>
+
             <Col>
-                <div>
+                <Row className="m-1">
                 <Alert className="m-1" variant="info">
                     My Followers
                 </Alert>    
-                </div>
-                {itemList}
+                </Row>
+                <Row>
+                    {itemList}
+                </Row>
             </Col>
         </Row>
         </Container>
