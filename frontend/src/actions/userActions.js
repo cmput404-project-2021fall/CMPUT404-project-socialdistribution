@@ -23,6 +23,12 @@ import {
   GET_USER_FOLLOWER_REQUEST,
   GET_USER_FOLLOWER_SUCCESS,
   GET_USER_FOLLOWER_FAIL,
+  CHECK_FOLLOWING_FAIL,
+  CHECK_FOLLOWING_REQUEST,
+  CHECK_FOLLOWING_SUCCESS,
+  FRIEND_REQUEST_REQUEST,
+  FRIEND_REQUEST_FAIL,
+  FRIEND_REQUEST_SUCCESS,
 } from "../constants/userConstants";
 
 export const register =
@@ -110,48 +116,47 @@ export const login = (username, password) => async (dispatch) => {
   }
 };
 
-export const getAuthorDetail = () => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: USER_DETAIL_REQUEST,
-    });
+export const getAuthorDetail =
+  (id = null) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: USER_DETAIL_REQUEST,
+      });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+      const {
+        userLogin: { userInfo },
+      } = getState();
+      var author_id = "";
+      if (id == null) {
+        author_id = userInfo.author_id;
+      } else {
+        author_id = id;
+      }
 
-    const config = {
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Token ${userInfo.token}`,
-      },
-    };
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Token ${userInfo.token}`,
+        },
+      };
 
-    console.log("gethere!");
-    console.log(userInfo.author_id);
-    console.log("start");
+      const { data } = await axios.get(`/api/author/${author_id}/`, config);
 
-    const { data } = await axios.get(
-      `/api/author/${userInfo.author_id}/`,
-      config
-    );
-    console.log(data);
-    console.log("jx");
-
-    dispatch({
-      type: USER_DETAIL_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_DETAIL_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
-    });
-  }
-};
+      dispatch({
+        type: USER_DETAIL_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_DETAIL_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
 
 export const editAuthorDetail =
   (displayname, github) => async (dispatch, getState) => {
@@ -307,6 +312,90 @@ export const followingUserCheck =
         type: GET_USER_FOLLOWER_FAIL,
         payload:
           error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
+
+export const checkFollowingStatus =
+  (author_id, foreign_id) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: CHECK_FOLLOWING_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Token ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `/api/author/${author_id}/followers/${foreign_id}`,
+        config
+      );
+
+      dispatch({
+        type: CHECK_FOLLOWING_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: CHECK_FOLLOWING_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
+
+export const sendFriendRequest =
+  (their_id, my_object, their_object) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: FRIEND_REQUEST_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Token ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `/api/author/${their_id}/inbox/`,
+        {
+          type: "Follow",
+          summary: `${userInfo.author.displayName} wants to follow you.`,
+          actor: my_object,
+          object: their_object,
+        },
+        config
+      );
+
+      dispatch({
+        type: FRIEND_REQUEST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: FRIEND_REQUEST_FAIL,
+        payload:
+          error.response.status == "400"
+            ? "Login Unsuccessful: Please check if your username or password is correct."
+            : error.response && error.response.data.detail
             ? error.response.data.detail
             : error.message,
       });

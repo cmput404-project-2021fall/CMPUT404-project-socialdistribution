@@ -145,7 +145,7 @@ function Posts(prop) {
             />
             <LinkContainer
               to={{
-                pathname: "/profile/" + prop.post.author.displayName,
+                pathname: "/profile/" + post_author_id,
                 state: { user_id: user_id },
               }}
               style={{ fontSize: "1.5rem" }}
