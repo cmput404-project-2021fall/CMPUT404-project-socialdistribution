@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   Button,
@@ -10,25 +10,25 @@ import {
   ListGroup,
   ListGroupItem,
   Nav,
+  Alert,
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Avatar from "../images/avatar.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deletePost,
-  getAllComments,
   likePost,
   postingComment,
+  getPosts,
 } from "../actions/postActions";
 import Message from "../components/Message";
+import { Callbacks } from "jquery";
 
 // return a post of prop within card
 function Posts(prop) {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-  const getComments = useSelector((state) => state.getComments);
-  const { error: commentError, response: getCommentResponse } = getComments;
   const postLike = useSelector((state) => state.postLike);
   const { error: postLikeError, reponse: postLikeResponse } = postLike;
   const postComment = useSelector((state) => state.postComment);
@@ -75,7 +75,6 @@ function Posts(prop) {
   const commentHandler = () => {
     if (!commentTab) {
       setCommentTab(true);
-      dispatch(getAllComments(post_author_id, post_id));
     } else {
       setCommentTab(false);
     }
@@ -127,13 +126,13 @@ function Posts(prop) {
       // remove extra message banner
       setMessage();
       dispatch(postingComment(commentContent, post_author_id, post_id));
+      dispatch(getPosts());
     }
   };
 
   return (
     <div className="m-5">
       {error && <Message variant="danger">{error}</Message>}
-      {commentError && <Message variant="danger">{commentError}</Message>}
       {postLikeError && <Message variant="danger">{postLikeError}</Message>}
       <Card>
         <Card.Body>
@@ -164,8 +163,10 @@ function Posts(prop) {
                   Delete
                 </Dropdown.Item>
               </DropdownButton>
+            ) : prop.post.visibility == "PRIVATE" ? (
+              <Alert className="ms-auto mx-1 mb-5">Private Post</Alert>
             ) : (
-              <div></div>
+              ""
             )}
           </div>
           <Card.Title className="m-3 text-center">
@@ -173,7 +174,10 @@ function Posts(prop) {
           </Card.Title>
           <Card.Text className="mx-3 my-4">{content}</Card.Text>
           <Row className="justify-content-between m-1">
-            <Col className="d-flex align-items-center">Likes: {numLikes}</Col>
+            <Col className="d-flex align-items-center">
+              Likes: {numLikes}&nbsp;&nbsp;&nbsp; Comments:{" "}
+              {prop.post.commentsSrc.comments.length}
+            </Col>
             <Col className="text-end">
               <Button
                 className={like || userInfo == null ? "m-1 disabled" : "m-1"}
@@ -185,8 +189,9 @@ function Posts(prop) {
               </Button>
               <Button
                 className={
-                  prop.post.visibility == "PUBLIC" ||
-                  (userInfo && prop.post.author.id == userInfo.author.id)
+                  (userInfo && prop.post.visibility == "PUBLIC") ||
+                  (userInfo && prop.post.author.id == userInfo.author.id) ||
+                  prop.post.visibility == "PRIVATE"
                     ? "m-1"
                     : "m-1 disabled"
                 }
@@ -206,11 +211,10 @@ function Posts(prop) {
               </Button>
             </Col>
           </Row>
-          {commentTab && getCommentResponse ? (
+          {commentTab ? (
             <div className="border rounded p-3">
-              Comments: {getCommentResponse.comments.length}
               <ListGroup className="m-1">
-                {getCommentResponse.comments.map((comment) => (
+                {prop.post.commentsSrc.comments.map((comment) => (
                   <ListGroup.Item>
                     <div style={{ fontWeight: "bold", display: "inline" }}>
                       {comment.author.displayName}:
