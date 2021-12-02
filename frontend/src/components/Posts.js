@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   Button,
@@ -21,6 +21,7 @@ import {
   postingComment,
 } from "../actions/postActions";
 import Message from "../components/Message";
+import { Callbacks } from "jquery";
 
 // return a post of prop within card
 function Posts(prop) {
@@ -127,6 +128,7 @@ function Posts(prop) {
       // remove extra message banner
       setMessage();
       dispatch(postingComment(commentContent, post_author_id, post_id));
+      dispatch(getAllComments(post_author_id, post_id));
     }
   };
 
@@ -185,7 +187,7 @@ function Posts(prop) {
               </Button>
               <Button
                 className={
-                  prop.post.visibility == "PUBLIC" ||
+                  (userInfo && prop.post.visibility == "PUBLIC") ||
                   (userInfo && prop.post.author.id == userInfo.author.id)
                     ? "m-1"
                     : "m-1 disabled"
