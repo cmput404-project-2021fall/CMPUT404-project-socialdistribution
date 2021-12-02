@@ -31,6 +31,7 @@ function Headers(props) {
 
   const logoutHandler = () => {
     dispatch(logout());
+    window.location.reload(false);
   };
 
   return (

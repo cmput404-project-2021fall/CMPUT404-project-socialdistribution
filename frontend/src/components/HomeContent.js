@@ -53,8 +53,6 @@ function HomeContent() {
   return (
     <div className="m-2">
       {message && <Message variant="danger">{message}</Message>}
-      {error && <Message variant="danger">{error}</Message>}
-      {getLikedError && <Message variant="danger">{getLikedError}</Message>}
       <Nav fill variant="tabs" defaultActiveKey="1">
         <Nav.Item>
           <Nav.Link eventKey="1" onClick={() => setTab(1)}>
