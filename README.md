@@ -39,7 +39,7 @@ python manage.py runserver
 Front - Back end
 
 - :white_check_mark: - :white_check_mark: As an author I want to make public posts.
-- :white_check_mark: - :white_check_mark: As an author I want to edit public posts.
+- :black_square_button: - :white_check_mark: As an author I want to edit public posts.
 - :white_check_mark: - :white_check_mark: As an author, posts I create can link to images. (via commonmark)
 - :white_check_mark: - :white_check_mark: As an author, posts I create can be images.
 - :black_square_button: - :black_square_button: As a server admin, images can be hosted on my server.
