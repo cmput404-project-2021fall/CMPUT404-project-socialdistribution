@@ -35,7 +35,8 @@ function ProfileContent(props) {
   const friendRequest = useSelector((state) => state.friendRequest);
   const { error: FRerror, response: FRresponse } = friendRequest;
 
-  const view_user_id = props.view_user_id;
+  const view_user_id =
+    myInfo.author_id != props.view_user_id ? props.view_user_id : null;
 
   useEffect(() => {
     if (view_user_id == null) {

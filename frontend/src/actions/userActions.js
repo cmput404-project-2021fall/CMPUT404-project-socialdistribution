@@ -29,6 +29,9 @@ import {
   FRIEND_REQUEST_REQUEST,
   FRIEND_REQUEST_FAIL,
   FRIEND_REQUEST_SUCCESS,
+  FOLLOWER_LIST_REQUEST,
+  FOLLOWER_LIST_SUCCESS,
+  FOLLOWER_LIST_FAIL,
 } from "../constants/userConstants";
 
 export const register =
@@ -403,3 +406,40 @@ export const sendFriendRequest =
       });
     }
   };
+
+export const getFollowerList = () => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: FOLLOWER_LIST_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Token ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `/api/author/${userInfo.author_id}/followers`,
+      config
+    );
+
+    dispatch({
+      type: FOLLOWER_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: FOLLOWER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
