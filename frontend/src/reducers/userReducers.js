@@ -25,6 +25,9 @@ import {
   FRIEND_REQUEST_REQUEST,
   FRIEND_REQUEST_FAIL,
   FRIEND_REQUEST_SUCCESS,
+  FOLLOWER_LIST_REQUEST,
+  FOLLOWER_LIST_SUCCESS,
+  FOLLOWER_LIST_FAIL,
 } from "../constants/userConstants";
 
 export const userRegisterReducer = (state = {}, action) => {
@@ -157,6 +160,22 @@ export const friendRequestReducer = (state = {}, action) => {
       return { loading: false, response: action.payload };
 
     case FRIEND_REQUEST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const followerListReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FOLLOWER_LIST_REQUEST:
+      return { loading: true };
+
+    case FOLLOWER_LIST_SUCCESS:
+      return { loading: false, response: action.payload };
+
+    case FOLLOWER_LIST_FAIL:
       return { loading: false, error: action.payload };
 
     default:

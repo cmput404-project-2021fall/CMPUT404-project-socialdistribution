@@ -1,50 +1,50 @@
-import React from "react";
-
-import { Container, Row, Col, Card, Alert, Button, LinkContainer} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Button,
+  LinkContainer,
+} from "react-bootstrap";
 import Headers from "../components/Headers";
 import SideBar from "../components/SideBar";
-import FollowerItem from "../components/FollowerItem"
-
+import FollowerItem from "../components/FollowerItem";
+import { useDispatch, useSelector } from "react-redux";
+import { getFollowerList } from "../actions/userActions";
 
 function NotificationPage() {
-    
-    // get FriendRequest data from db
-    // const [id, setId] = useState("");
-    // const [summary, setSummary] = useState("");
-    // const [requestor, setRequestor] = useState("");
-    // const [requestee, setAuthor] = useState(""); // this is the author
-    
-    var items = [];
-    for (var i=1;i<=10;i++){
-        items.push({requestor:"", display_name: "TestUser"+i.toString()});
-    }
-    var itemList = []
-    for(let item of items){
-        itemList.push(<FollowerItem item={item}/>)
-    }
+  const dispatch = useDispatch();
+  const followerList = useSelector((state) => state.followerList);
+  const { error, response } = followerList;
 
-    return (
-        
-        <Container className="App fluid min-vh-100 min-vw-100 d-flex flex-column p-0">
-        <Headers />
-        <Row className="flex-grow-1 m-0">
-            <Col className="bg-secondary col-md-2 border">
-                <SideBar />
-            </Col>
+  useEffect(() => {
+    dispatch(getFollowerList());
+  }, []);
 
-            <Col>
-                <Row className="m-1">
-                <Alert className="m-1" variant="info">
-                    My Followers
-                </Alert>    
-                </Row>
-                <Row>
-                    {itemList}
-                </Row>
-            </Col>
-        </Row>
-        </Container>
-        );
+  return (
+    <Container className="App fluid min-vh-100 min-vw-100 d-flex flex-column p-0">
+      <Headers />
+      <Row className="flex-grow-1 m-0">
+        <Col className="bg-secondary col-md-2 border">
+          <SideBar />
+        </Col>
+
+        <Col className="my-2">
+          <Row className="m-1">
+            <Alert variant="info">My Followers/ Friends</Alert>
+          </Row>
+          {response &&
+            response.items.map((f) => (
+              <Row className="m-1">
+                <FollowerItem follower={f} />
+              </Row>
+            ))}
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
 export default NotificationPage;
