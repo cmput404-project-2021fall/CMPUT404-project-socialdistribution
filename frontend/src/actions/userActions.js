@@ -244,6 +244,8 @@ export const logout = () => async (dispatch, getState) => {
 
   localStorage.removeItem("userInfo");
   dispatch({ type: USER_LOGOUT });
+
+  window.location.reload(false);
 };
 
 export const editReset = () => (dispatch) => {

@@ -43,7 +43,7 @@ function HomeContent() {
         break;
       }
     }
-    if (id == userInfo.author_id) {
+    if (userInfo && id == userInfo.author_id) {
       return true;
     } else {
       return false;
