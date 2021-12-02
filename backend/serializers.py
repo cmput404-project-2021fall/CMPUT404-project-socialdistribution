@@ -66,12 +66,13 @@ class PostSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=False)
     categories = serializers.SerializerMethodField()
     numLikes = serializers.IntegerField(source="get_num_likes", read_only=True)
-    
+    commentsSrc = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
         fields = ("type","id","url","title","source",
                   "origin","description","contentType",
-                  "content","author","categories","comments","numLikes",
+                  "content","author","categories","comments","commentsSrc","numLikes",
                   "published","visibility","unlisted")
 
     # Override the default update function to apply on certain field
@@ -98,6 +99,18 @@ class PostSerializer(serializers.ModelSerializer):
     
     def get_categories(self, obj):
         return json.loads(obj.categories)
+
+    def get_commentsSrc(self, obj):
+        comments_list = list(obj.comments.all())
+        comment_dict_list = CommentSerializer(comments_list, many=True).data
+        comments_src = {
+            'type':'comments',
+            'post': obj.get_id(),
+            'id': obj.get_comment_url(),
+            'comments': comment_dict_list
+        }
+        
+        return comments_src
 
 class LikeSerializer(serializers.ModelSerializer):
     type = serializers.CharField(default="Like", read_only=True)

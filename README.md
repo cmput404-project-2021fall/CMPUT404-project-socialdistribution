@@ -59,7 +59,7 @@ Front - Back end
 - :black_square_button: - :white_check_mark: As an author, I want to befriend remote authors
 - :white_check_mark: - :white_check_mark: As an author, I want to feel safe about sharing images and posts with my friends -- images shared to friends should only be visible to friends. [public images are public]
 - :white_check_mark: - :white_check_mark: As an author, when someone sends me a friends only-post I want to see the likes.
-- :black_square_button: - :black_square_button: As an author, comments on friend posts are private only to me the original author.
+- :white_check_mark: - :white_check_mark: As an author, comments on friend posts are private only to me the original author.
 - :black_square_button: - :black_square_button: As an author, I want un-befriend local and remote authors
 - :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage my profile
 - :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage/author my posts
