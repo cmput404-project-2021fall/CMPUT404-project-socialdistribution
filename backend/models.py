@@ -4,10 +4,10 @@ from django.db import models
 from django.db.models import constraints
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.contrib import admin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
-
 from rest_framework.request import Request
 
 from social_dist.settings import DJANGO_DEFAULT_HOST 
@@ -278,7 +278,11 @@ class Node(models.Model):
     #basic auth info that must be provided by our server when making requests to foreign servers
     requesting_auth_info = models.CharField(max_length=100, blank=True)
 
+    # This will tell the server that it should connect to this node if set to True
     connect = models.BooleanField(default=True)
+
+    # Check if authentication is required
+    require_auth = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.host)
