@@ -1,7 +1,8 @@
 # This will convert the dict from the public space to the dict required for our models
+import uuid
+import traceback 
 
 from .models import Author, Post
-import uuid
 
 def sanitize_author_dict(author: dict):
     """
@@ -32,6 +33,7 @@ def sanitize_author_dict(author: dict):
             converted_author['github_url'] = author['github']
     except Exception as e:
         print("sanitize author exception : {}\n\n{}".format(type(e), str(e)))
+        print(traceback.format_exc())
         return None
     return converted_author
 

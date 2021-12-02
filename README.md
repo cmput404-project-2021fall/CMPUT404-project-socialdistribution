@@ -34,6 +34,54 @@ To deploy the website type the command below in the terminal:
 python manage.py runserver
 ```
 
+## User Stories Progress
+
+Front - Back end
+
+- :white_check_mark: - :white_check_mark: As an author I want to make public posts.
+- :white_check_mark: - :white_check_mark: As an author I want to edit public posts.
+- :white_check_mark: - :white_check_mark: As an author, posts I create can link to images. (via commonmark)
+- :white_check_mark: - :white_check_mark: As an author, posts I create can be images.
+- :black_square_button: - :black_square_button: As a server admin, images can be hosted on my server.
+- :white_check_mark: - :white_check_mark: As an author, posts I create can be private to another author
+- :white_check_mark: - :white_check_mark: As an author, posts I create can be private to my friends
+- :black_square_button: - :black_square_button: As an author, I can share other author's public posts
+- :black_square_button: - :black_square_button: As an author, I can re-share other author's friend posts to my friends
+- :white_check_mark: - :white_check_mark: As an author, posts I make can be in simple plain text
+- :white_check_mark: - :white_check_mark: As an author, posts I make can be in CommonMark
+- :white_check_mark: - :white_check_mark: As an author, I want a consistent identity per server
+- :white_check_mark: - :white_check_mark: As a server admin, I want to host multiple authors on my server
+- :black_square_button: - :black_square_button: As a server admin, I want to share public images with users on other servers.
+- :black_square_button: - :black_square_button: As an author, I want to pull in my github activity to my "stream"
+- :white_check_mark: - :white_check_mark: As an author, I want to post posts to my "stream"
+- :white_check_mark: - :white_check_mark: As an author, I want to delete my own public posts.
+- :black_square_button: - :white_check_mark: As an author, I want to befriend local authors
+- :black_square_button: - :white_check_mark: As an author, I want to befriend remote authors
+- :white_check_mark: - :white_check_mark: As an author, I want to feel safe about sharing images and posts with my friends -- images shared to friends should only be visible to friends. [public images are public]
+- :white_check_mark: - :white_check_mark: As an author, when someone sends me a friends only-post I want to see the likes.
+- :black_square_button: - :black_square_button: As an author, comments on friend posts are private only to me the original author.
+- :black_square_button: - :black_square_button: As an author, I want un-befriend local and remote authors
+- :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage my profile
+- :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage/author my posts
+- :white_check_mark: - :white_check_mark: As a server admin, I want to be able add, modify, and remove authors.
+- :white_check_mark: - :white_check_mark: As a server admin, I want to OPTIONALLY be able to allow users to sign up but require my OK to finally be on my server
+- :black_square_button: - :black_square_button: As a server admin, I don't want to do heavy setup to get the posts of my author's friends.
+- :white_check_mark: - :white_check_mark: As a server admin, I want a restful interface for most operations
+- :white_check_mark: - :white_check_mark: As an author, other authors cannot modify my public post
+- :white_check_mark: - :white_check_mark: As an author, other authors cannot modify my shared to friends post.
+- :white_check_mark: - :white_check_mark: As an author, I want to comment on posts that I can access
+- :white_check_mark: - :white_check_mark: As an author, I want to like posts that I can access
+- :black_square_button: - :white_check_mark: As an author, my server will know about my friends
+- :black_square_button: - :white_check_mark: As an author, When I befriend someone it follows them, only when the other authors befriends me do I count as a real friend.
+- :black_square_button: - :white_check_mark: As an author, I want to know if I have friend requests.
+- :white_check_mark: - :white_check_mark: As an author I should be able to browse the public posts of everyone
+- :white_check_mark: - :white_check_mark: As a server admin, I want to be able to add nodes to share with
+- :white_check_mark: - :white_check_mark: As a server admin, I want to be able to remove nodes and stop sharing with them.
+- :white_check_mark: - :white_check_mark: As a server admin, I can limit nodes connecting to me via authentication.
+- :white_check_mark: - :white_check_mark: As a server admin, node to node connections can be authenticated with HTTP Basic Auth
+- :white_check_mark: - :white_check_mark: As a server admin, I can disable the node to node interfaces for connections that are not authenticated!
+- :black_square_button: - :black_square_button: As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
+
 ## API Documentation
 
 The API documentation is found on the wiki page [here](https://github.com/cmput404-project-2021fall/CMPUT404-project-socialdistribution/wiki)
