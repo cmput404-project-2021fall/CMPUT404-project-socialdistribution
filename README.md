@@ -39,12 +39,12 @@ python manage.py runserver
 Front - Back end
 
 - :white_check_mark: - :white_check_mark: As an author I want to make public posts.
-- :black_square_button: - :white_check_mark: As an author I want to edit public posts.
+- :white_check_mark: - :white_check_mark: As an author I want to edit public posts.
 - :white_check_mark: - :white_check_mark: As an author, posts I create can link to images. (via commonmark)
-- :black_square_button: - :black_square_button: As an author, posts I create can be images.
+- :white_check_mark: - :white_check_mark: As an author, posts I create can be images.
 - :black_square_button: - :black_square_button: As a server admin, images can be hosted on my server.
-- :black_square_button: - :black_square_button: As an author, posts I create can be private to another author
-- :white_check_mark: - :black_square_button: As an author, posts I create can be private to my friends
+- :white_check_mark: - :white_check_mark: As an author, posts I create can be private to another author
+- :white_check_mark: - :white_check_mark: As an author, posts I create can be private to my friends
 - :black_square_button: - :black_square_button: As an author, I can share other author's public posts
 - :black_square_button: - :black_square_button: As an author, I can re-share other author's friend posts to my friends
 - :white_check_mark: - :white_check_mark: As an author, posts I make can be in simple plain text
@@ -57,8 +57,8 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As an author, I want to delete my own public posts.
 - :black_square_button: - :white_check_mark: As an author, I want to befriend local authors
 - :black_square_button: - :white_check_mark: As an author, I want to befriend remote authors
-- :black_square_button: - :black_square_button: As an author, I want to feel safe about sharing images and posts with my friends -- images shared to friends should only be visible to friends. [public images are public]
-- :black_square_button: - :white_check_mark: As an author, when someone sends me a friends only-post I want to see the likes.
+- :white_check_mark: - :white_check_mark: As an author, I want to feel safe about sharing images and posts with my friends -- images shared to friends should only be visible to friends. [public images are public]
+- :white_check_mark: - :white_check_mark: As an author, when someone sends me a friends only-post I want to see the likes.
 - :black_square_button: - :black_square_button: As an author, comments on friend posts are private only to me the original author.
 - :black_square_button: - :black_square_button: As an author, I want un-befriend local and remote authors
 - :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage my profile
@@ -69,8 +69,8 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As a server admin, I want a restful interface for most operations
 - :white_check_mark: - :white_check_mark: As an author, other authors cannot modify my public post
 - :white_check_mark: - :white_check_mark: As an author, other authors cannot modify my shared to friends post.
-- :black_square_button: - :white_check_mark: As an author, I want to comment on posts that I can access
-- :black_square_button: - :white_check_mark: As an author, I want to like posts that I can access
+- :white_check_mark: - :white_check_mark: As an author, I want to comment on posts that I can access
+- :white_check_mark: - :white_check_mark: As an author, I want to like posts that I can access
 - :black_square_button: - :white_check_mark: As an author, my server will know about my friends
 - :black_square_button: - :white_check_mark: As an author, When I befriend someone it follows them, only when the other authors befriends me do I count as a real friend.
 - :black_square_button: - :white_check_mark: As an author, I want to know if I have friend requests.
