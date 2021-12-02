@@ -145,7 +145,7 @@ function Posts(prop) {
             />
             <LinkContainer
               to={{
-                pathname: "/profile/" + prop.post.author.displayName,
+                pathname: "/profile/" + post_author_id,
                 state: { user_id: user_id },
               }}
               style={{ fontSize: "1.5rem" }}
@@ -176,7 +176,7 @@ function Posts(prop) {
             <Col className="d-flex align-items-center">Likes: {numLikes}</Col>
             <Col className="text-end">
               <Button
-                className={like ? "m-1 disabled" : "m-1"}
+                className={like || userInfo == null ? "m-1 disabled" : "m-1"}
                 style={{ width: "7rem" }}
                 variant="success"
                 onClick={() => likeHandler()}
@@ -184,7 +184,12 @@ function Posts(prop) {
                 {like ? "Liked" : "Like"}
               </Button>
               <Button
-                className="m-1"
+                className={
+                  prop.post.visibility == "PUBLIC" ||
+                  (userInfo && prop.post.author.id == userInfo.author.id)
+                    ? "m-1"
+                    : "m-1 disabled"
+                }
                 style={{ width: "7rem" }}
                 variant="info"
                 onClick={() => commentHandler()}

@@ -5,7 +5,13 @@ import EditIcon from "../images/edit.png";
 import { LinkContainer } from "react-router-bootstrap";
 
 import Message from "../components/Message";
-import { getAuthorDetail, getUsers } from "../actions/userActions";
+import {
+  getAuthorDetail,
+  getUsers,
+  checkFollowingStatus,
+  followingUserCheck,
+  sendFriendRequest,
+} from "../actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import jQuery from "jquery";
 
@@ -14,64 +20,90 @@ function ProfileContent(props) {
 
   const dispatch = useDispatch();
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo: myInfo } = userLogin;
+
   const userDetail = useSelector((state) => state.userDetail);
-  const { error, loading, userInfo } = userDetail;
+  const { userInfo } = userDetail;
 
-  // currently just returns logged in user's info;
-  // later, fix page url to reflect different author's profile and get info by passing their id.
-  useEffect(() => {
-    if (userInfo == null) {
-      dispatch(getAuthorDetail());
-    }
-  }, [dispatch, userInfo]);
+  const checkFollowing = useSelector((state) => state.checkFollowing);
+  const { error, response } = checkFollowing;
 
-  console.log(userDetail);
+  const getUserFollower = useSelector((state) => state.getUserFollower);
+  const { error: error2, response: response2 } = getUserFollower;
+
+  const friendRequest = useSelector((state) => state.friendRequest);
+  const { error: FRerror, response: FRresponse } = friendRequest;
 
   const view_user_id = props.view_user_id;
-  console.log(view_user_id);
 
-
-  const userList = useSelector((state) => state.userList);
-  //const { error, loading1, userList } = userList;
-  const userList1 = null;
   useEffect(() => {
-    if (userList1 == null) {
-      dispatch(getUsers());
+    if (view_user_id == null) {
+      dispatch(getAuthorDetail());
+    } else {
+      dispatch(getAuthorDetail(view_user_id));
+      // check if param2 follows param1; use this to check if I follow them
+      dispatch(checkFollowingStatus(view_user_id, myInfo.author_id));
+      // check if param follows me
+      dispatch(followingUserCheck(view_user_id));
     }
-  }, [dispatch, userList1]);
+  }, []);
 
-  console.log("heere");
-  console.log(userList1);
-  console.log("end");
-  // get null
+  // setup boolean to make things more organized
+  const [meFollowThem, setMeFollowThem] = useState();
+  const [theyFollowMe, setTheyFollowMe] = useState();
 
+  if ((response || error) && (response2 || error2) && meFollowThem == null) {
+    // do I follow them?
+    if (error == "Follower Author Not Found") {
+      setMeFollowThem(false);
+    } else {
+      setMeFollowThem(true);
+    }
+    // do they follow me?
+    if (error2 == "Follower Author Not Found") {
+      setTheyFollowMe(false);
+    } else {
+      setTheyFollowMe(true);
+    }
+  }
+
+  const friendRequestHandler = () => {
+    console.log(myInfo.author);
+    console.log(userInfo);
+    dispatch(sendFriendRequest(view_user_id, myInfo.author, userInfo));
+  };
 
   return (
     <div className="m-5">
-
-      <Button 
-        className="m-1" style={{width:"auto"}} variant={'success'}>
-        {view_user_id ? 'I\'m viewing '+view_user_id+'\'s profile' : 'My profile page'}
-      </Button>
+      <Alert
+        className="alert-primary text-center p-2"
+        style={{ width: "auto" }}
+      >
+        {view_user_id
+          ? userInfo && userInfo.displayName + "'s Profile Page"
+          : "My Profile Page"}
+      </Alert>
       <Row className="justify-content-between">
-        
         <Col md={8}>
           <Row className="justify-content-between">
             <Col md={6}>
               <Image src={Avatar} width="100%" className="mb-5" />
             </Col>
-            <Col md={2} className="d-flex flex-column mt-auto">
-              <LinkContainer
-                to="/editprofile"
-                className="p-2 my-5"
-                style={{ backgroundColor: "orange" }}
-              >
-                {/* visible if it's ur own profile */}
-                <Button>
-                  <Image src={EditIcon} width="50%" />
-                </Button>
-              </LinkContainer>
-            </Col>
+            {view_user_id ? null : (
+              <Col md={2} className="d-flex flex-column mt-auto">
+                <LinkContainer
+                  to="/editprofile"
+                  className="p-2 my-5"
+                  style={{ backgroundColor: "orange" }}
+                >
+                  {/* visible if it's ur own profile */}
+                  <Button>
+                    <Image src={EditIcon} width="50%" />
+                  </Button>
+                </LinkContainer>
+              </Col>
+            )}
           </Row>
           <Alert>
             Display Name:&#160;&#160;
@@ -83,25 +115,45 @@ function ProfileContent(props) {
           </Alert>
         </Col>
         {/* show or hide request buttons*/}
-        {view_user_id ?
-        <Col md={2}>
-          {/* neither following */}
-          <Button className="m-2">Add Friend</Button>
-          {/* visibile when following or friends */}
-          <Button className="m-2" variant="success">
-            Following
-          </Button>
-          <Button className="m-2" variant="danger">
-            Unfollow
-          </Button>
-          {/* visibile when incoming friend request */}
-          <Button className="m-2" variant="success">
-            Accept Friend Request
-          </Button>
-          <Button className="m-2" variant="danger">
-            Decline Friend Request
-          </Button>
-        </Col> : null}
+        {view_user_id ? (
+          <Col md={2} className="text-center">
+            {meFollowThem && theyFollowMe ? (
+              <Alert className="text-center" variant="info">
+                Friends
+              </Alert>
+            ) : meFollowThem && !theyFollowMe ? (
+              <Alert className="text-center" variant="secondary">
+                Following
+              </Alert>
+            ) : (
+              ""
+            )}
+            {!meFollowThem && !theyFollowMe ? (
+              <Button className="m-2" onClick={() => friendRequestHandler()}>
+                Add Friend
+              </Button>
+            ) : meFollowThem ? (
+              <Button className="m-2" variant="danger">
+                Unfollow
+              </Button>
+            ) : theyFollowMe &&
+              !meFollowThem /* Need to add a checker if there is friend request */ ? (
+              <Button className="m-2" variant="success">
+                Accept Friend Request
+              </Button>
+            ) : (
+              ""
+            )}
+            {/* Need to add a checker if there is friend request */}
+            {theyFollowMe && !meFollowThem ? (
+              <Button className="m-2" variant="danger">
+                Decline Friend Request
+              </Button>
+            ) : (
+              ""
+            )}
+          </Col>
+        ) : null}
       </Row>
     </div>
   );
