@@ -770,16 +770,16 @@ class InboxViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
                 type = "author",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72c9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
             title="Test Title",
-            source = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
-            origin = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
@@ -788,10 +788,10 @@ class InboxViewTest(TestCase):
 
         Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72f9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
             title="Test Title",
-            source = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
-            origin = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
@@ -799,7 +799,7 @@ class InboxViewTest(TestCase):
         )
 
         post_like = Like.objects.create(
-            object="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            object="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
             author = authors[2],
             summary = "liking author likes post",
         )

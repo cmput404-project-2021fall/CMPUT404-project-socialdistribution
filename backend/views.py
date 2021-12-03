@@ -27,7 +27,9 @@ from .models import Author, FriendRequest, Post, Comment, Like, Inbox
 from .forms import SignUpForm
 from .permission import IsAuthenticated, IsAuthorOrReadOnly, IsLocalAuthor
 from .converter import *
-from .node_connections import send_post_to_foreign_authors, send_to_friends, async_update_db
+from .node_connections import send_post_to_foreign_authors, send_to_friends, async_update_db, send_friend_request
+
+from social_dist.settings import DJANGO_DEFAULT_HOST
 
 # Helper function on getting an author based on author_id
 
@@ -893,6 +895,9 @@ class InboxDetail(APIView):
             )
 
             if friend_request_created:
+                #send to the foreign author if need be
+                if DJANGO_DEFAULT_HOST.split('//')[1].split('/api/')[0] not in author.url:
+                    send_friend_request(author,request_dict)
                 inbox.friend_requests.add(friend_request)
                 friend_request.actor.followers.add(author)
                 existing_friend_request = get_friend_request(author,friend_request.actor)

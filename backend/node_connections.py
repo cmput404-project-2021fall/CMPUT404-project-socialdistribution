@@ -150,6 +150,41 @@ def send_to_friends(author: Author, payload: dict):
     except Exception as e:
         print("send_to_friends Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
+def send_friend_request(object: Author, payload: dict):
+    """
+    This will send payload to all the authors' friend inbox
+
+    args:
+        author: The author object to send from
+        payload: The json object to send
+    """
+    try:
+        internal_post_dict = sanitize_post_dict(payload)
+
+        friend_url_list = []
+        auth_info_list = []
+        header_list = []
+        param_list = []
+        data_list = []
+
+        friend_url = object.url + '/inbox/'
+        # Strip off the schema
+        node = Node.objects.get(host__icontains=str(object.host).split('//')[1])
+        user, passwd = str(node.requesting_auth_info).split(':')
+        auth_info = (user, passwd)
+        post_header = None
+        friend_url_list.append(friend_url)
+        auth_info_list.append(auth_info)
+        header_list.append(post_header)
+        param_list.append(None)
+        data_list.append(payload)
+
+        with ThreadPoolExecutor(max_workers=20) as pool:
+            res_friend_inbox_obj_list = list(pool.map(async_post, friend_url_list, auth_info_list, header_list, param_list, data_list))
+            
+    except Exception as e:
+        print("send_friend_request Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
+
 
 
 # Update Posts
