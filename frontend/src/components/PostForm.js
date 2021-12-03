@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Stack, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import { authorFriendlist } from "../actions/userActions";
@@ -12,6 +12,9 @@ function PostForm() {
   const [contentType, setContentType] = useState("text/plain");
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState("PUBLIC");
+  const [file, setFile] = useState("");
+  const [cate, setCate] = useState("text/plain");
+  
 
   const [message, setMessage] = useState("");
 
@@ -49,6 +52,11 @@ function PostForm() {
     }
   };
 
+  const fileHandler = (e) => {
+    setFile(e.target.files[0])
+  }
+
+
   let history = useHistory();
 
   useEffect(() => {
@@ -59,6 +67,7 @@ function PostForm() {
       dispatch(postReset());
     }
   }, [history, dispatch, success]);
+  
 
   return (
     <div>
@@ -83,10 +92,12 @@ function PostForm() {
             as="select"
             onChange={(e) => {
               setContentType(e.target.value);
+              setCate(e.target.value);
             }}
           >
             <option value="text/plain">Plain Text</option>
             <option value="text/markdown">CommonMark</option>
+            <option value="text/image">Image</option>
           </Form.Control>
         </Form.Group>
 
@@ -120,7 +131,6 @@ function PostForm() {
             ""
           )}
         </Form.Group>
-
         <Form.Group className="m-3" controlId="content">
           <Form.Label>Content</Form.Label>
           <Form.Control
@@ -128,6 +138,11 @@ function PostForm() {
             rows={5}
             onChange={(e) => setContent(e.target.value)}
           />
+          <Stack>
+            <input type="file" class="form-control" accept="image/*" onChange={fileHandler}></input>
+            <img width="300" src={file? URL.createObjectURL(file):null}></img>
+          </Stack>
+          
         </Form.Group>
         <div className="d-flex align-items-end justify-content-end px-5">
           <Button className="btn" type="submit" variant="primary">

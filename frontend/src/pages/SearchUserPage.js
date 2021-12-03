@@ -3,11 +3,10 @@ import { Container, Row, Col, Button, Form, Stack, Alert,Card,Nav } from "react-
 import Headers from "../components/Headers";
 import SideBar from "../components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
-import { getPosts } from "../actions/postActions";
 import { getUsers } from "../actions/userActions";
-import Posts from "../components/Posts";
 import { LinkContainer } from "react-router-bootstrap";
 import Avatar from "../images/avatar.jpg";
+import userEvent from "@testing-library/user-event";
 
 const SearchUserPage = (props) => {
 
@@ -17,16 +16,29 @@ const SearchUserPage = (props) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const userList = null;
+  useEffect(() => {
+    if (userList == null) {
+      dispatch(getUsers());
+    }
+  }, [dispatch, userList]);
+  console.log("here");
+  console.log(userList);
+  // const {user} = userList;
+
   const searchText = props.match.params.id;
 
-  const userList = useSelector((state) => state.userList);
-  useEffect(() => {
-    dispatch(getUsers());
-  }, [dispatch]);
-  const users = userList.userList ? userList.userList.items : [];
+  // useEffect(() => {
+  //   if(user == null){
+  //     dispatch(getUsers());
+  //   }
+  // }, [dispatch, user]);
+  
+  const [message, setMessage] = useState("");
+  const users = [];//user ? user.items : [];
 
   var searchResultUsers = [];
-
+  
   if(searchText==" "){
     for(var i=0; i<users.length; i++){
         if(users[i].displayName){
@@ -45,9 +57,41 @@ const SearchUserPage = (props) => {
           searchResultUsers.push(users[i]);
           
         }
-        console.log("haha");
     }
   }
+
+  // const userList = useSelector((state) => state.userList);
+  // useEffect(() => {
+  //   dispatch(getUsers());
+  // }, [dispatch]);
+  
+  
+  
+  // const users = userList.userList ? userList.userList.items : [];
+
+
+  //  var searchResultUsers = [];
+
+  // if(searchText==" "){
+  //   for(var i=0; i<users.length; i++){
+  //       if(users[i].displayName){
+  //           if(!users[i].profile_img){
+  //               users[i].profil_img=Avatar;
+  //           }
+  //           searchResultUsers.push(users[i]);  
+  //       }  
+  //   }
+  // }else{
+  //   for(var i=0; i<users.length; i++){
+  //       if(users[i].displayName.indexOf(searchText)!=-1){
+  //           if(!users[i].profile_img){
+  //               users[i].profil_img=Avatar;
+  //           }
+  //         searchResultUsers.push(users[i]);
+          
+  //       }
+  //   }
+  // }
 
 
   return (

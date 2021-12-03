@@ -262,6 +262,10 @@ export const getUsers = () => async (dispatch, getState) => {
       type: USER_LIST_REQUEST,
     });
 
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
     const config = {
       headers: {
         "Content-type": "application/json",

@@ -74,7 +74,7 @@ function Headers(props) {
               }
               style={{ backgroundColor: "orange" }}
             >
-              <Button type="submit">Search</Button>
+              <Button>Search</Button>
             </LinkContainer>
           </Nav>
 
