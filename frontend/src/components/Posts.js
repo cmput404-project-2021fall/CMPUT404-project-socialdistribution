@@ -119,9 +119,14 @@ function Posts(prop) {
 
   const user_id = prop.post.author.id.split("/").pop();
 
-  console.log("debug");
-  const githubEvent = dispatch(getGithubEvent());
-  if(githubEvent)console.log(githubEvent);
+  // console.log("debug");
+  // const githubEvent = useSelector((state) => state.githubEvent);
+  // const { erro, respons } = githubEvent;
+  // const githubEvent = null;
+  // useEffect(() => {
+  //   dispatch(getGithubEvent());
+  // }, [githubEvent]);
+  const githubEvent = dispatch(getGithubEvent()); // TODO
 
 
   const commentSubmitHandler = (e) => {
@@ -140,6 +145,7 @@ function Posts(prop) {
     <div className="m-5">
       {error && <Message variant="danger">{error}</Message>}
       {postLikeError && <Message variant="danger">{postLikeError}</Message>}
+      <Message variant="danger">{githubEvent?githubEvent.length+'1':"hwfh"}</Message>
       <Card>
         <Card.Body>
           <div className="d-flex">
