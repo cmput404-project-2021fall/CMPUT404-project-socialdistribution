@@ -418,7 +418,6 @@ class PostDetail(APIView):
             - If author (or post if specified) is not found, a HttpResponseNotFound is returned 
         """
         if IsLocalAuthor(request):
-            print("here")
             async_update_db(True, True)
 
         if author_id == None:
@@ -427,7 +426,7 @@ class PostDetail(APIView):
                 posts_list = list(Post.objects.all().order_by('-published'))
             # If not then get only the PUBLIC posts
             else:
-                posts_list = list(Post.objects.filter(visibility='PUBLIC').order_by('-published'))
+                posts_list = list(Post.objects.filter(visibility='PUBLIC', unlisted=False).order_by('-published'))
             post_serializer = PostSerializer(posts_list, many=True)
             post_dict = {
                 "items": post_serializer.data
@@ -456,7 +455,7 @@ class PostDetail(APIView):
             return Response(post_dict)
 
         # For getting the list of posts made by the author
-        posts_list = list(author.posted.filter(visibility='PUBLIC').order_by('-published'))
+        posts_list = list(author.posted.filter(visibility='PUBLIC', unlisted=False).order_by('-published'))
 
         page = request.GET.get('page', 1)
         size = request.GET.get('size', 5)
