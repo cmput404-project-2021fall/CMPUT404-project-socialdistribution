@@ -28,14 +28,12 @@ const SearchUserPage = (props) => {
 
   const searchText = props.match.params.id;
 
-  // useEffect(() => {
-  //   if(user == null){
-  //     dispatch(getUsers());
-  //   }
-  // }, [dispatch, user]);
+  const userList = useSelector((state) => state.userList);
+  useEffect(() => {
+    dispatch(getUsers());
+  }, []);
   
-  const [message, setMessage] = useState("");
-  const users = [];//user ? user.items : [];
+  const users = userList.response ? userList.response.items : [];
 
   var searchResultUsers = [];
   
@@ -50,48 +48,14 @@ const SearchUserPage = (props) => {
     }
   }else{
     for(var i=0; i<users.length; i++){
-        if(users[i].displayName.indexOf(searchText)!=-1){
+        if(users[i].displayName && users[i].displayName.indexOf(searchText)!=-1){
             if(!users[i].profile_img){
                 users[i].profil_img=Avatar;
             }
           searchResultUsers.push(users[i]);
-          
         }
     }
   }
-
-  // const userList = useSelector((state) => state.userList);
-  // useEffect(() => {
-  //   dispatch(getUsers());
-  // }, [dispatch]);
-  
-  
-  
-  // const users = userList.userList ? userList.userList.items : [];
-
-
-  //  var searchResultUsers = [];
-
-  // if(searchText==" "){
-  //   for(var i=0; i<users.length; i++){
-  //       if(users[i].displayName){
-  //           if(!users[i].profile_img){
-  //               users[i].profil_img=Avatar;
-  //           }
-  //           searchResultUsers.push(users[i]);  
-  //       }  
-  //   }
-  // }else{
-  //   for(var i=0; i<users.length; i++){
-  //       if(users[i].displayName.indexOf(searchText)!=-1){
-  //           if(!users[i].profile_img){
-  //               users[i].profil_img=Avatar;
-  //           }
-  //         searchResultUsers.push(users[i]);
-          
-  //       }
-  //   }
-  // }
 
 
   return (

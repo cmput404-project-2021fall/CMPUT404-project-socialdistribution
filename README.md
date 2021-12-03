@@ -71,8 +71,8 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As an author, other authors cannot modify my shared to friends post.
 - :white_check_mark: - :white_check_mark: As an author, I want to comment on posts that I can access
 - :white_check_mark: - :white_check_mark: As an author, I want to like posts that I can access
-- :black_square_button: - :white_check_mark: As an author, my server will know about my friends
-- :black_square_button: - :white_check_mark: As an author, When I befriend someone it follows them, only when the other authors befriends me do I count as a real friend.
+- :white_check_mark: - :white_check_mark: As an author, my server will know about my friends
+- :white_check_mark: - :white_check_mark: As an author, When I befriend someone it follows them, only when the other authors befriends me do I count as a real friend.
 - :black_square_button: - :white_check_mark: As an author, I want to know if I have friend requests.
 - :white_check_mark: - :white_check_mark: As an author I should be able to browse the public posts of everyone
 - :white_check_mark: - :white_check_mark: As a server admin, I want to be able to add nodes to share with
@@ -80,7 +80,7 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As a server admin, I can limit nodes connecting to me via authentication.
 - :white_check_mark: - :white_check_mark: As a server admin, node to node connections can be authenticated with HTTP Basic Auth
 - :white_check_mark: - :white_check_mark: As a server admin, I can disable the node to node interfaces for connections that are not authenticated!
-- :black_square_button: - :black_square_button: As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
+- :black_square_button: - :white_check_mark: As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
 
 ## API Documentation
 

@@ -23,6 +23,7 @@ import {
 } from "../actions/postActions";
 import Message from "../components/Message";
 import { Callbacks } from "jquery";
+import { getGithubEvent } from "../actions/userActions";
 
 // return a post of prop within card
 function Posts(prop) {
@@ -118,6 +119,16 @@ function Posts(prop) {
 
   const user_id = prop.post.author.id.split("/").pop();
 
+  // console.log("debug");
+  // const githubEvent = useSelector((state) => state.githubEvent);
+  // const { erro, respons } = githubEvent;
+  // const githubEvent = null;
+  // useEffect(() => {
+  //   dispatch(getGithubEvent());
+  // }, [githubEvent]);
+  const githubEvent = dispatch(getGithubEvent()); // TODO
+
+
   const commentSubmitHandler = (e) => {
     e.preventDefault();
     if (commentContent == "") {
@@ -190,8 +201,8 @@ function Posts(prop) {
               <Button
                 className={
                   (userInfo && prop.post.visibility == "PUBLIC") ||
-                  (userInfo && prop.post.author.id == userInfo.author.id) ||
-                  prop.post.visibility == "PRIVATE"
+                    (userInfo && prop.post.author.id == userInfo.author.id) ||
+                    prop.post.visibility == "PRIVATE"
                     ? "m-1"
                     : "m-1 disabled"
                 }
