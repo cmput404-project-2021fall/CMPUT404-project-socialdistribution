@@ -269,7 +269,6 @@ export const getUsers = () => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(`/api/authors/`, config);
-
     dispatch({
       type: USER_LIST_SUCCESS,
       payload: data,
@@ -436,6 +435,40 @@ export const getFollowerList = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: FOLLOWER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+// curl https://api.github.com/users/IvanZyf666/events
+export const getGithubEvent = () => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: USER_LIST_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+
+    const { data } = await axios.get(`https://api.github.com/users/IvanZyf666/events`, config);
+    dispatch({
+      type: USER_LIST_SUCCESS,
+      payload: data,
+    });
+
+  } catch (error) {
+    dispatch({
+      type: USER_LIST_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
