@@ -80,7 +80,7 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As a server admin, I can limit nodes connecting to me via authentication.
 - :white_check_mark: - :white_check_mark: As a server admin, node to node connections can be authenticated with HTTP Basic Auth
 - :white_check_mark: - :white_check_mark: As a server admin, I can disable the node to node interfaces for connections that are not authenticated!
-- :white_check_mark: - :white_check_mark: As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
+- :black_square_button: - :white_check_mark: As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
 
 ## API Documentation
 
