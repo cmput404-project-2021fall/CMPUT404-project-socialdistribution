@@ -145,7 +145,6 @@ function Posts(prop) {
     <div className="m-5">
       {error && <Message variant="danger">{error}</Message>}
       {postLikeError && <Message variant="danger">{postLikeError}</Message>}
-      <Message variant="danger">{githubEvent?githubEvent.length+'1':"hwfh"}</Message>
       <Card>
         <Card.Body>
           <div className="d-flex">
