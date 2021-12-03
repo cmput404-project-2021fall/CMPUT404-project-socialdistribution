@@ -12,6 +12,7 @@ import {
   checkFollowingReducer,
   friendRequestReducer,
   followerListReducer,
+  userListReducer,
 } from "./reducers/userReducers";
 import {
   postCreateReducer,
@@ -40,6 +41,7 @@ const reducer = combineReducers({
   checkFollowing: checkFollowingReducer,
   friendRequest: friendRequestReducer,
   followerList: followerListReducer,
+  userList: userListReducer,
 });
 const userInfoFromStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))

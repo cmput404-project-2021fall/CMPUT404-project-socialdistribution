@@ -102,10 +102,17 @@ function HomeContent() {
               ""
             )
           )
-        : likedPosts &&
+        : tab === 3
+        ? likedPosts &&
           posts.map((p) =>
             isMyPost(p) ? <Posts post={p} liked={likedPosts} /> : ""
-          )}
+          )
+        :(
+          likedPosts &&
+          posts.map((p) =>
+            isMyPost(p) ? <Posts post={p} liked={likedPosts} /> : ""
+          )
+        )}
     </div>
   );
 }
