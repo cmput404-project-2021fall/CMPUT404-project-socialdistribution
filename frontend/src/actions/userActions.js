@@ -32,6 +32,9 @@ import {
   FOLLOWER_LIST_REQUEST,
   FOLLOWER_LIST_SUCCESS,
   FOLLOWER_LIST_FAIL,
+  GITHUB_EVENT_REQUEST,
+  GITHUB_EVENT_SUCCESS,
+  GITHUB_EVENT_FAIL,
 } from "../constants/userConstants";
 
 export const register =
@@ -449,37 +452,34 @@ export const getFollowerList = () => async (dispatch, getState) => {
 };
 
 export const getGithubEvent = () => async (dispatch, getState) => {
-  // try {
-  //   dispatch({
-  //     type: USER_LIST_REQUEST,
-  //   });
+  try {
+    dispatch({
+      type: GITHUB_EVENT_REQUEST,
+    });
 
-  //   const {
-  //     userLogin: { userInfo },
-  //   } = getState();
+    const {
+      userLogin: { userInfo },
+    } = getState();
 
-  //   const config = {
-  //     headers: {
-  //       "Content-type": "application/json",
-  //     },
-  //   };
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
 
-  //   const { data } = await axios.get(`https://api.github.com/users/IvanZyf666/events`, config);
-  //   dispatch({
-  //     type: USER_LIST_SUCCESS,
-  //     payload: data,
-  //   });
-  //   console.log("action");
-  //   console.log(dispatch);
-  //   console.log(data);
+    const { data } = await axios.get(`https://api.github.com/users/IvanZyf666/events`, config);
+    dispatch({
+      type: GITHUB_EVENT_SUCCESS,
+      payload: data,
+    });
 
-  // } catch (error) {
-  //   dispatch({
-  //     type: USER_LIST_FAIL,
-  //     payload:
-  //       error.response && error.response.data.detail
-  //         ? error.response.data.detail
-  //         : error.message,
-  //   });
-  // }
+  } catch (error) {
+    dispatch({
+      type: GITHUB_EVENT_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
 };
