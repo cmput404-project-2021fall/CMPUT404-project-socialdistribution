@@ -5,6 +5,8 @@ import Message from "../components/Message";
 import { authorFriendlist } from "../actions/userActions";
 import { createPost, postReset } from "../actions/postActions";
 import { useHistory } from "react-router-dom";
+import { render } from "@testing-library/react";
+
 
 // form page for making a new post; redirect user to login if they are not logged in
 function PostForm() {
@@ -45,6 +47,7 @@ function PostForm() {
     e.preventDefault();
     if (title == "" || content == "") {
       setMessage("Please fill in title and content to make a post.");
+      console.log(file);
     } else {
       // remove extra message banner
       setMessage();
@@ -54,6 +57,9 @@ function PostForm() {
 
   const fileHandler = (e) => {
     setFile(e.target.files[0])
+  }
+  const renderDiff = () => {
+    console.log(cate);
   }
 
 
@@ -68,7 +74,7 @@ function PostForm() {
     }
   }, [history, dispatch, success]);
   
-
+  
   return (
     <div>
       {message && <Message variant="danger">{message}</Message>}
@@ -85,7 +91,7 @@ function PostForm() {
             onChange={(e) => setTitle(e.target.value)}
           />
         </Form.Group>
-
+          
         <Form.Group className="m-3">
           <Form.Label>Content Type</Form.Label>
           <Form.Control
@@ -100,7 +106,7 @@ function PostForm() {
             <option value="text/image">Image</option>
           </Form.Control>
         </Form.Group>
-
+  
         <Form.Group className="m-3">
           <Form.Label>Visibility</Form.Label>
           <Form.Control
@@ -132,17 +138,24 @@ function PostForm() {
           )}
         </Form.Group>
         <Form.Group className="m-3" controlId="content">
-          <Form.Label>Content</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={5}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <Stack>
+          {cate!="text/image" &&
+            <Form.Group>
+            <Form.Label>Content</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={5}
+              onChange={(e) => setContent(e.target.value)}
+            />
+            </Form.Group>
+          }
+          {cate=="text/image" &&
+            <Stack>
+            <Form.Label>Image</Form.Label>
             <input type="file" class="form-control" accept="image/*" onChange={fileHandler}></input>
             <img width="300" src={file? URL.createObjectURL(file):null}></img>
           </Stack>
-          
+          }
+
         </Form.Group>
         <div className="d-flex align-items-end justify-content-end px-5">
           <Button className="btn" type="submit" variant="primary">
