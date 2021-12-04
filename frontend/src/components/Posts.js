@@ -23,7 +23,6 @@ import {
 } from "../actions/postActions";
 import Message from "../components/Message";
 import { Callbacks } from "jquery";
-import { getGithubEvent } from "../actions/userActions";
 
 // return a post of prop within card
 function Posts(prop) {
@@ -118,16 +117,6 @@ function Posts(prop) {
   };
 
   const user_id = prop.post.author.id.split("/").pop();
-
-  // console.log("debug");
-  // const githubEvent = useSelector((state) => state.githubEvent);
-  // const { erro, respons } = githubEvent;
-  // const githubEvent = null;
-  // useEffect(() => {
-  //   dispatch(getGithubEvent());
-  // }, [githubEvent]);
-  const githubEvent = dispatch(getGithubEvent()); // TODO
-
 
   const commentSubmitHandler = (e) => {
     e.preventDefault();

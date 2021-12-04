@@ -13,6 +13,7 @@ import {
   friendRequestReducer,
   followerListReducer,
   userListReducer,
+  githubEventReducer,
 } from "./reducers/userReducers";
 import {
   postCreateReducer,
@@ -42,6 +43,7 @@ const reducer = combineReducers({
   friendRequest: friendRequestReducer,
   followerList: followerListReducer,
   userList: userListReducer,
+  githubEvent: githubEventReducer,
 });
 const userInfoFromStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))
