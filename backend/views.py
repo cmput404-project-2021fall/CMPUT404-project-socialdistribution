@@ -431,6 +431,7 @@ class PostDetail(APIView):
                 posts_list = list(Post.objects.filter(visibility='PUBLIC', unlisted=False).order_by('-published'))
             post_serializer = PostSerializer(posts_list, many=True)
             post_dict = {
+                "type":"posts",
                 "items": post_serializer.data
             }
             return Response(post_dict)
@@ -473,6 +474,7 @@ class PostDetail(APIView):
 
         post_serializer = PostSerializer(posts, many=True)
         post_dict = {
+            "type": "posts",  
             "items": post_serializer.data
         }
         return Response(post_dict)

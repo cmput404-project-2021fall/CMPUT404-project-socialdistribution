@@ -220,8 +220,6 @@ def send_like(author: Author, payload: dict):
     except Exception as e:
         print("send_friend_request Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
-
-
 # Update Posts
 def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_profile = True):
     """
@@ -382,7 +380,7 @@ def CRUD_remote_likes(likes_dict_list: list):
 # Update Author
 def update_remote_authors(host: str, auth: str, time_profile = True):
     """
-    This will make an author API request to the host using auth to get the list of current authors on the remote note and updating our database accordingly
+    This will make an author API request to the host using auth to get the list of current authors on the remote node and update our database accordingly
 
     args:
         host - The host url of the remote server
@@ -438,3 +436,64 @@ def CRUD_remote_authors(host: str, author_dict_list: list):
 
     except Exception as e:
         print("CRUD_remote_authors exception : {}\n\n{}".format(type(e), str(e)))
+
+# Update remote followers
+def update_remote_followers(host: str, auth: str, foreign_author_ids: list, time_profile = True):
+    """
+    This will make an follower API request to the host using auth to get the list of followers to a remote author and update our database accordingly.
+
+    args:
+
+    return:
+    """
+    start_time = time.time()
+    try:
+        remote_authors_host = Author.objects.filter(id__in=foreign_author_ids).values_list('id','url')
+
+        with ThreadPoolExecutor(max_workers=20) as pool:
+            id = [author[0] for author in remote_authors_host]
+            urls = [author[1] + '/followers' for author in remote_authors_host]
+            user, passwd = auth.split(':')
+            auths = [(user, passwd)]*len(urls)
+            headers = [{'Accept': 'application/json'}]*len(urls)
+            params = [None]*len(urls)
+    
+            
+            res_follower_obj_list = list(pool.map(async_get, urls, auths, headers, params, id))
+
+            for res_follower_obj in res_follower_obj_list:
+                author_id = res_follower_obj['object_instance']
+                author = Author.objects.get(id=author_id)
+                follower_dict_list = []
+                for raw_follower in res_follower_obj['items']:
+                    follower = sanitize_author_dict(raw_follower, host)
+                    if follower == None:
+                        continue
+                    follower_dict_list.append(follower)
+                CRUD_remote_authors(author, follower_dict_list)
+            # Add, update or delete posts based on the foreign state
+
+    except Exception as e:
+        print("update_remote_followers exception : {}\n\n{}".format(type(e), str(e)))
+
+    if time_profile:
+        print(f'update_remote_followers {time.time() - start_time} s')
+
+    return [follower_dict['id'] for follower_dict in follower_dict_list]
+
+def CRUD_remote_followers(author: Author, follower_dict_list: list):
+    """
+    This will create, update or delete followers based on the remote responses
+    """
+    try:
+        for author_dict in follower_dict_list:
+            Author.objects.update_or_create(id=author_dict['id'], defaults=author_dict)
+        
+        ids = [author_dict['id'] for author_dict in follower_dict_list]
+        followers = Author.objects.filter(id__in=ids)
+
+        author.followers.set(followers)
+
+    except Exception as e:
+        print("CRUD_remote_followers exception : {}\n\n{}".format(type(e), str(e)))
+    
