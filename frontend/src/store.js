@@ -8,12 +8,16 @@ import {
   userFriendlistReducer,
   userLoginReducer,
   userRegisterReducer,
+  getUserFollowerReducer,
 } from "./reducers/userReducers";
 import {
   postCreateReducer,
   postDeleteReducer,
   postListReducer,
-  writeCommentReducer,
+  postCommentReducer,
+  postLikeReducer,
+  getCommentsReducer,
+  getLikedReducer,
 } from "./reducers/postReducers";
 
 const reducer = combineReducers({
@@ -25,7 +29,11 @@ const reducer = combineReducers({
   postCreate: postCreateReducer,
   postList: postListReducer,
   postDelete: postDeleteReducer,
-  writeComment: writeCommentReducer,
+  postComment: postCommentReducer,
+  postLike: postLikeReducer,
+  getComments: getCommentsReducer,
+  getLiked: getLikedReducer,
+  getUserFollower: getUserFollowerReducer,
 });
 const userInfoFromStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))

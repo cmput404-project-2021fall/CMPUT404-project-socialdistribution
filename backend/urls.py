@@ -2,15 +2,29 @@ from django.urls import include, path
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 
-from rest_framework import routers
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework_swagger.views import get_swagger_view
 from .auth_views import obtain_auth_token
 
 from . import views
 
+schema_view = get_schema_view(
+    openapi.Info(
+      title="CMPUT 404 Social Distribution API",
+      default_version='v1',
+      description="The API to use our webservices",
+   ), 
+   public=True,
+   permission_classes=[permissions.AllowAny]
+)
+
 router = routers.DefaultRouter()
 
 urlpatterns = [
-
+    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # The endpoint for singing up
     path('signup/', views.signup, name="signup"),
     path('admin-approval/', views.admin_approval, name='admin-approval'),
@@ -50,6 +64,9 @@ urlpatterns = [
     # The endpoint for viewing Likes on a comment
     path("author/<str:author_id>/post/<str:post_id>/comments/<str:comment_id>/likes",views.LikesDetail.as_view(), name="comment-likes"),
 
-    # The endpoint for posting Likes on a comment or post
-    path("author/<str:author_id>/inbox/", views.InboxDetail.as_view(), name="post-likes"),
+    # The public endpoint for our inbox
+    path("author/<str:author_id>/inbox/", views.InboxDetail.as_view(), name="inbox"),
+
+    # The internal endpoint to get everything in the inbox (posts friend requests and likes)
+    path("author/<str:author_id>/inbox/all/", views.inbox_list_api, name="inbox_internal"),
 ]

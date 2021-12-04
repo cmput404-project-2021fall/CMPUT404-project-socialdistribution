@@ -20,11 +20,14 @@ import {
   USER_LIST_FAIL,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
+  GET_USER_FOLLOWER_REQUEST,
+  GET_USER_FOLLOWER_SUCCESS,
+  GET_USER_FOLLOWER_FAIL,
 } from "../constants/userConstants";
 
 export const register =
   (name, display, github = "", password, cPassword) =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
       const form = new FormData();
       form.append("username", name);
@@ -37,9 +40,14 @@ export const register =
         type: USER_REGISTER_REQUEST,
       });
 
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
       const config = {
         headers: {
           "Content-type": "multipart/form-data",
+          //Authorization: `Token ${userInfo.token}`,
         },
       };
 
@@ -266,3 +274,41 @@ export const getUsers = () => async (dispatch, getState) => {
     });
   }
 };
+
+export const followingUserCheck =
+  (foreign_user_id) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_USER_FOLLOWER_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Token ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `/api/author/${userInfo.author_id}/followers/${foreign_user_id}`,
+        config
+      );
+
+      dispatch({
+        type: GET_USER_FOLLOWER_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: GET_USER_FOLLOWER_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };

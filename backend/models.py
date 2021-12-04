@@ -4,18 +4,21 @@ from django.db import models
 from django.db.models import constraints
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.contrib import admin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.utils.timezone import now
 from rest_framework.request import Request
 
 from social_dist.settings import DJANGO_DEFAULT_HOST 
 
 class Author(models.Model):
+    # The type which should be constant
+    type = models.CharField(max_length=6, default="author", editable=False)
     # This is the UUID for the author
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # one2one relation with django user
-    # Also includes remote users as well
+    # Remote authors will have null values for users
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True) 
     # The followers of this author, not a bidirectional relationship 
     followers = models.ManyToManyField('self', related_name='follower', blank=True, symmetrical=False)
@@ -24,11 +27,11 @@ class Author(models.Model):
     # The URL for the author's profile
     url = models.URLField(editable=False)
     # The display name of the author
-    display_name = models.CharField(max_length=200, blank=True)
+    display_name = models.CharField(max_length=200, blank=True, null=True)
     # HATEOAS url for github API
-    github_url = models.URLField(max_length=200, blank=True)
+    github_url = models.URLField(max_length=200, blank=True, null=True)
     # Image profile
-    profile_image = models.URLField(max_length=200, blank=True)
+    profile_image = models.URLField(max_length=200, blank=True, null=True, default="")
     
     def update_url_field(self):
         """
@@ -54,7 +57,7 @@ class Author(models.Model):
         return self.url or self.id
     
     def __str__(self) -> str:
-        return self.display_name +'-' + str(self.id)
+        return str(self.display_name) +'-' + str(self.id)
 
 # https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 @receiver(post_save, sender=User)
@@ -78,18 +81,20 @@ class Post(models.Model):
         ("FRIENDS", "FRIENDS"),
         ("PRIVATE", "PRIVATE")
     ]
+    # The type which should be constant
+    type = models.CharField(max_length=4, default="post", editable=False)
     # The UUID for the post
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # The URL for the post
     url = models.URLField(max_length=500, editable=False)
     # The title of the post
     title = models.CharField(max_length=200)
-    # Where did you get this post from
-    source = models.URLField(max_length=500, blank=True)
-    # Where is it actually from
-    origin = models.URLField(max_length=500, blank=True)
+    # Which host did you get this post from
+    source = models.URLField(max_length=500, default=DJANGO_DEFAULT_HOST)
+    # which host is it actually from
+    origin = models.URLField(max_length=500, default=DJANGO_DEFAULT_HOST)
     # A tweet length description of the post
-    description = models.CharField(max_length=240, blank=True)
+    description = models.CharField(max_length=240, blank=True, default=" ")
     # The content type for the HTTP header
     content_type = models.CharField(max_length=30, choices = CONTENT_TYPES, default="text/plain")
     # The main content of the post
@@ -99,7 +104,7 @@ class Post(models.Model):
     # Categories is represented as a stringify JSON list 
     categories = models.TextField(default='[]')
     # When the post was published
-    published = models.DateTimeField('date published', auto_now_add=True)
+    published = models.DateTimeField('date published', default=now)
     # What is the visibility level of the Post
     visibility = models.CharField(max_length=30, choices = VISIBILITY, default="PUBLIC")
     # Where the comments for this post is located
@@ -136,7 +141,6 @@ class Post(models.Model):
         """
         url = reverse('post-detail', args=[str(self.author.id),str(self.id)])
         # We want to remove the api prefix from the object
-        url = url.replace("api/","")
         return url
 
     def update_url_field(self):
@@ -149,10 +153,28 @@ class Post(models.Model):
         return: None
         """
         self.url = str(self.author.url) + '/posts/' + str(self.id)
-        self.comment_url = self.url + '/comments'
         self.save()
-
     
+    def get_comment_url(self):
+        """
+        This will return the comment URL for this post
+        """
+        return str(self.author.url) + '/posts/' + str(self.id) + '/comments'
+    
+    def get_origin_url(self):
+        """
+        This will return the origin url based on the post's origin and post id
+        """
+        url = str(self.origin)  + 'posts/' + str(self.id)
+        return url
+
+    def get_source_url(self):
+        """
+        This will return the source url based on the post's source and post id
+        """
+        return str(self.source)  + 'posts/' + str(self.id)
+
+
 class Comment(models.Model):
     CONTENT_TYPES = [
         ("text/markdown", "text/markdown"),
@@ -161,6 +183,8 @@ class Comment(models.Model):
         ("image/png;base64","image/png;base64"),
         ("image/jpeg;base64","image/jpeg;base64")
     ]
+    # The type which should be constant
+    type = models.CharField(max_length=7, default="comment", editable=False)
     # The UUID of the comment
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # The URL of the comment
@@ -174,7 +198,7 @@ class Comment(models.Model):
     # The comment body
     comment = models.TextField()
     # The date when the comment was created
-    published = models.DateTimeField('date published', auto_now_add=True)
+    published = models.DateTimeField('date published', default=now)
 
     def get_id(self) -> Union[str, uuid.UUID]:
         """
@@ -206,11 +230,12 @@ class Comment(models.Model):
         self.save()
 
 class Like(models.Model):
-    #not sure what to do for @context
+    # The type should be constant
+    type = models.CharField(max_length=4, default="Like", editable=False)
     # The URL of the object being liked
     object = models.URLField(max_length=500, editable=False)
     # The author of the like
-    author = models.ForeignKey(Author,related_name='liked',on_delete = models.CASCADE)
+    author = models.ForeignKey(Author, related_name='liked',on_delete = models.CASCADE)
     summary = models.CharField(max_length=200)
     class Meta:
         constraints = [
@@ -218,6 +243,9 @@ class Like(models.Model):
         ]
 
 class FriendRequest(models.Model):
+    # The type should be constant
+    type = models.CharField(max_length=6, default="Follow", editable=False)
+    # The id of the Friend Request
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Summary of the friend request
     summary = models.CharField(max_length=200)
@@ -232,6 +260,9 @@ class FriendRequest(models.Model):
 
 # This is the inbox section
 class Inbox(models.Model):
+    # The type should be constant
+    type = models.CharField(max_length=5, default="inbox", editable=False)
+    # The id should be the author
     id = models.OneToOneField(Author, related_name="inbox", on_delete=models.CASCADE, primary_key=True)
 
     posts = models.ManyToManyField(Post, related_name="inbox_post", blank=True, symmetrical=False)
@@ -245,7 +276,13 @@ class Node(models.Model):
     auth_info = models.CharField(max_length=100)
 
     #basic auth info that must be provided by our server when making requests to foreign servers
-    #connecting_auth_info = models.CharField(max_length=100)
+    requesting_auth_info = models.CharField(max_length=100, blank=True)
+
+    # This will tell the server that it should connect to this node if set to True
+    connect = models.BooleanField(default=True)
+
+    # Check if authentication is required
+    require_auth = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.host)

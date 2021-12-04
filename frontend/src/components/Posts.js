@@ -14,25 +14,45 @@ import {
 import { LinkContainer } from "react-router-bootstrap";
 import Avatar from "../images/avatar.jpg";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost } from "../actions/postActions";
+import {
+  deletePost,
+  getAllComments,
+  likePost,
+  postingComment,
+} from "../actions/postActions";
 import Message from "../components/Message";
 
-// return list of posts within card filtered with parameter (category)
+// return a post of prop within card
 function Posts(prop) {
+  const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+  const getComments = useSelector((state) => state.getComments);
+  const { error: commentError, response: getCommentResponse } = getComments;
+  const postLike = useSelector((state) => state.postLike);
+  const { error: postLikeError, reponse: postLikeResponse } = postLike;
+  const postComment = useSelector((state) => state.postComment);
+  const { error: postCommentError, reponse: postCommentResponse } = postComment;
 
-  const [like, setLike] = useState({ isLike: false, amount: 10 });
-  const [comment, setComment] = useState(false);
+  const [commentTab, setCommentTab] = useState(false);
   const [share, setShare] = useState(false);
+  const [like, setLike] = useState(null);
+  const [numLikes, setNumLikes] = useState(prop ? prop.post.numLikes : 0);
+  const [commentContent, setCommentContent] = useState("");
+  const [message, setMessage] = useState("");
 
-  const commentPost = () => {
-    if (!comment) {
-      setComment(true);
-    } else {
-      setComment(false);
+  // did I like this post already?
+  if (like == null) {
+    prop.liked.forEach((element) => {
+      if (element.object == prop.post.url) {
+        setLike(true);
+      }
+    });
+    if (like !== null) {
+      setLike(false);
     }
-  };
+  }
+
   const sharePost = () => {
     if (/*your didn't share/create this post &&*/ !share) {
       setShare(true);
@@ -46,12 +66,26 @@ function Posts(prop) {
   let arr = prop.post.id.split("/");
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] == "author") {
-      console.log(arr[i + 1]);
       post_author_id = arr[i + 1];
     } else if (arr[i] == "posts") {
       post_id = arr[i + 1];
     }
   }
+
+  const commentHandler = () => {
+    if (!commentTab) {
+      setCommentTab(true);
+      dispatch(getAllComments(post_author_id, post_id));
+    } else {
+      setCommentTab(false);
+    }
+  };
+
+  const likeHandler = () => {
+    setLike(true);
+    dispatch(likePost(prop.post.url, post_author_id));
+    setNumLikes(prop.post.numLikes);
+  };
 
   // is this post written by me?
   const isMyPost =
@@ -69,13 +103,11 @@ function Posts(prop) {
 
   var content = prop ? prop.post.content : "";
 
-  if (prop.post.content_type == "text/markdown") {
+  if (prop.post.contentType == "text/markdown") {
     const input = content;
     const ast = parser.parse(input);
     content = renderer.render(ast);
   }
-
-  const dispatch = useDispatch();
 
   const postDelete = useSelector((state) => state.postDelete);
   const { error, success, post } = postDelete;
@@ -85,10 +117,24 @@ function Posts(prop) {
     window.location.reload();
   };
 
+  const user_id = prop.post.author.id.split("/").pop();
+
+  const commentSubmitHandler = (e) => {
+    e.preventDefault();
+    if (commentContent == "") {
+      setMessage("Enter your comment.");
+    } else {
+      // remove extra message banner
+      setMessage();
+      dispatch(postingComment(commentContent, post_author_id, post_id));
+    }
+  };
 
   return (
     <div className="m-5">
       {error && <Message variant="danger">{error}</Message>}
+      {commentError && <Message variant="danger">{commentError}</Message>}
+      {postLikeError && <Message variant="danger">{postLikeError}</Message>}
       <Card>
         <Card.Body>
           <div className="d-flex">
@@ -97,10 +143,16 @@ function Posts(prop) {
               src={Avatar}
               style={{ width: "6rem", height: "6rem" }}
             />
-            <LinkContainer to={'/profile/'+prop.post.author.displayName} style={{fontSize:"1.5rem"}}>
-            <Nav.Link className="m-2 justify-content-center">
-              {prop.post.author.displayName}
-            </Nav.Link>
+            <LinkContainer
+              to={{
+                pathname: "/profile/" + prop.post.author.displayName,
+                state: { user_id: user_id },
+              }}
+              style={{ fontSize: "1.5rem" }}
+            >
+              <Nav.Link className="m-2 justify-content-center">
+                {prop.post.author.displayName}
+              </Nav.Link>
             </LinkContainer>
             {isMyPost ? (
               <DropdownButton
@@ -121,23 +173,21 @@ function Posts(prop) {
           </Card.Title>
           <Card.Text className="mx-3 my-4">{content}</Card.Text>
           <Row className="justify-content-between m-1">
-            <Col className="d-flex align-items-center">
-              Likes: {prop.post.numLikes}&nbsp; &nbsp; &nbsp; Comments:{" "}
-              {prop.post.comments.length}
-            </Col>
+            <Col className="d-flex align-items-center">Likes: {numLikes}</Col>
             <Col className="text-end">
               <Button
-                className="m-1"
+                className={like ? "m-1 disabled" : "m-1"}
                 style={{ width: "7rem" }}
                 variant="success"
+                onClick={() => likeHandler()}
               >
-                {like.isLike ? "Liked" : "Like"}
+                {like ? "Liked" : "Like"}
               </Button>
               <Button
                 className="m-1"
                 style={{ width: "7rem" }}
                 variant="info"
-                onClick={commentPost}
+                onClick={() => commentHandler()}
               >
                 Comment
               </Button>
@@ -151,25 +201,35 @@ function Posts(prop) {
               </Button>
             </Col>
           </Row>
-          {comment ? (
-            <div class="border rounded p-3">
-              <ListGroup>
-                {prop.post.comments.map((comment) => (
-                  <ListGroup.Item>Edit this later</ListGroup.Item>
+          {commentTab && getCommentResponse ? (
+            <div className="border rounded p-3">
+              Comments: {getCommentResponse.comments.length}
+              <ListGroup className="m-1">
+                {getCommentResponse.comments.map((comment) => (
+                  <ListGroup.Item>
+                    <div style={{ fontWeight: "bold", display: "inline" }}>
+                      {comment.author.displayName}:
+                    </div>
+                    {"   "}
+                    {comment.comment}
+                  </ListGroup.Item>
                 ))}
               </ListGroup>
-              <Form.Group className="my-2" controlId="content">
-                <Form.Control
-                  as="textarea"
-                  rows={2}
-                  // onChange={(e) => setContent(e.target.value)}
-                />
-              </Form.Group>
-              <div className="d-flex align-items-end justify-content-end px-5">
-                <Button className="btn" type="submit" variant="primary">
-                  Submit
-                </Button>
-              </div>
+              {message && <Message variant="danger">{message}</Message>}
+              <Form onSubmit={commentSubmitHandler}>
+                <Form.Group className="my-2" controlId="content">
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    onChange={(e) => setCommentContent(e.target.value)}
+                  />
+                </Form.Group>
+                <div className="d-flex align-items-end justify-content-end px-5">
+                  <Button className="btn" type="submit" variant="primary">
+                    Submit
+                  </Button>
+                </div>
+              </Form>
             </div>
           ) : (
             ""
