@@ -8,6 +8,7 @@ import { getUsers } from "../actions/userActions";
 import Posts from "../components/Posts";
 import { LinkContainer } from "react-router-bootstrap";
 import Avatar from "../images/avatar.jpg";
+import PImage from "../images/dazhitouxiang.jpeg";
 
 const SearchUserPage = (props) => {
 
@@ -31,9 +32,6 @@ const SearchUserPage = (props) => {
   if(searchText==" "){
     for(var i=0; i<users.length; i++){
         if(users[i].displayName){
-            if(!users[i].profile_img){
-                users[i].profil_img=Avatar;
-            }
             searchResultUsers.push(users[i]);  
         }  
     }
@@ -60,7 +58,7 @@ const SearchUserPage = (props) => {
                 <div>
                 <Alert className="m-1" variant="info">
                   Search results for users
-                </Alert>    
+                </Alert>  
                 </div>
                 {searchResultUsers.map((p)=>(
                   <div>
