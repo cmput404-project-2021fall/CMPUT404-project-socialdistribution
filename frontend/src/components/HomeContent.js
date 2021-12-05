@@ -127,11 +127,11 @@ function HomeContent() {
         <Nav.Item>
           {userInfo ? (
             <Nav.Link eventKey="4" onClick={() => setTab(4)}>
-              My Stream
+              GitHub Activity
             </Nav.Link>
           ) : (
             <Nav.Link eventKey="4" disabled>
-              My Stream
+              GitHub Activity
             </Nav.Link>
           )}
         </Nav.Item>
