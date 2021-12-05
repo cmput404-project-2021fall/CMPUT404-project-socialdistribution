@@ -21,6 +21,9 @@ import {
   GET_LIKED_REQUEST,
   GET_LIKED_FAIL,
   GET_LIKED_SUCCESS,
+  GET_NOTIFICATIONS_REQUEST,
+  GET_NOTIFICATIONS_SUCCESS,
+  GET_NOTIFICATIONS_FAIL,
 } from "../constants/postConstants";
 
 export const postCreateReducer = (state = {}, action) => {
@@ -131,6 +134,22 @@ export const getCommentsReducer = (state = {}, action) => {
       return { loading: false, response: action.payload };
 
     case GET_COMMENTS_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const getNotificationsReducer = (state = {}, action) => {
+  switch (action.type) {
+    case GET_NOTIFICATIONS_REQUEST:
+      return { loading: true };
+
+    case GET_NOTIFICATIONS_SUCCESS:
+      return { loading: false, response: action.payload };
+
+    case GET_NOTIFICATIONS_FAIL:
       return { loading: false, error: action.payload };
 
     default:

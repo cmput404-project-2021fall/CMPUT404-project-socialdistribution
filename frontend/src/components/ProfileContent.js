@@ -137,19 +137,6 @@ function ProfileContent(props) {
               <Button className="m-2" variant="danger">
                 Unfollow
               </Button>
-            ) : theyFollowMe &&
-              !meFollowThem /* Need to add a checker if there is friend request */ ? (
-              <Button className="m-2" variant="success">
-                Accept Friend Request
-              </Button>
-            ) : (
-              ""
-            )}
-            {/* Need to add a checker if there is friend request */}
-            {theyFollowMe && !meFollowThem ? (
-              <Button className="m-2" variant="danger">
-                Decline Friend Request
-              </Button>
             ) : (
               ""
             )}

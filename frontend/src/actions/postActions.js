@@ -22,6 +22,9 @@ import {
   GET_LIKED_REQUEST,
   GET_LIKED_FAIL,
   GET_LIKED_SUCCESS,
+  GET_NOTIFICATIONS_REQUEST,
+  GET_NOTIFICATIONS_SUCCESS,
+  GET_NOTIFICATIONS_FAIL,
 } from "../constants/postConstants";
 
 export const createPost =
@@ -296,6 +299,43 @@ export const getLikedPosts = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: GET_LIKED_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const getAllNotifications = () => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: GET_NOTIFICATIONS_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Token ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `/api/author/${userInfo.author_id}/inbox/all/`,
+      config
+    );
+
+    dispatch({
+      type: GET_NOTIFICATIONS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_NOTIFICATIONS_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
