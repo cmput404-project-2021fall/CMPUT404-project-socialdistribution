@@ -79,16 +79,11 @@ function HomeContent() {
   if (githubEvent) {
     for (var i = 0; i < githubEvent.length; i++) {
       var githubActivity = {
-        user_name: githubEvent[i].actor.display_login,
-        type:
-          githubEvent[i].type == "PushEvent"
-            ? "push"
-            : githubEvent[i].type == "PullRequestEvent"
-            ? "pull"
-            : githubEvent[i].type == "CreateEvent"
-            ? "create"
-            : githubEvent[i].type == "WatchEvent"
-            ? "watch"
+        "user_name": githubEvent[i].actor.display_login,
+        "type": githubEvent[i].type == "PushEvent" ? "push to"
+            : githubEvent[i].type == "PullRequestEvent" ? "pull from"
+            : githubEvent[i].type == "CreateEvent" ? "create"
+            : githubEvent[i].type == "WatchEvent" ? "watch"
             : "",
         repo_name: githubEvent[i].repo.name,
         time: githubEvent[i].created_at,
