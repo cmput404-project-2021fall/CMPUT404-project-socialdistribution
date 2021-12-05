@@ -43,25 +43,48 @@ function PostForm() {
       : ""
   );
 
+  const [fileBase64String, setFileBase64String] = useState("");
+
+  const encodeFileBase64 = () => {
+    var reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        var Base64 = reader.result;
+        setFileBase64String(Base64);
+        console.log(Base64);
+      };
+      reader.onerror = (error) => {
+        console.log("error: ", error);
+      };
+    }
+  }; 
+
   const submitHandler = (e) => {
     e.preventDefault();
+    if(cate=="text/image"){
+      encodeFileBase64(file);
+      
+      setTimeout(() => {
+        console.log(fileBase64String);
+        setMessage();
+        dispatch(createPost(title, fileBase64String, "text/plain", visibility));
+      }, 2000);
+    }
+    else{
     if (title == "" || content == "") {
       setMessage("Please fill in title and content to make a post.");
-      console.log(file);
     } else {
       // remove extra message banner
       setMessage();
+
       dispatch(createPost(title, content, contentType, visibility));
-    }
+    }}
   };
 
   const fileHandler = (e) => {
-    setFile(e.target.files[0])
+    setFile(e.target.files[0]);
   }
-  const renderDiff = () => {
-    console.log(cate);
-  }
-
 
   let history = useHistory();
 
@@ -73,6 +96,7 @@ function PostForm() {
       dispatch(postReset());
     }
   }, [history, dispatch, success]);
+
   
   
   return (
@@ -153,6 +177,11 @@ function PostForm() {
             <Form.Label>Image</Form.Label>
             <input type="file" class="form-control" accept="image/*" onChange={fileHandler}></input>
             <img width="300" src={file? URL.createObjectURL(file):null}></img>
+            
+            <img width="300" src={fileBase64String?"data:image/png;base64"+fileBase64String:null}></img>
+
+
+
           </Stack>
           }
 

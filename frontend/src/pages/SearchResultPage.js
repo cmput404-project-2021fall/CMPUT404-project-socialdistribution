@@ -41,7 +41,10 @@ const SearchResultPage = (props) => {
   }else{
     for( var i=0;i<posts.length;i++){ 
       if ( (posts[i].title.indexOf(searchText) != -1) || (posts[i].content.indexOf(searchText) != -1)) {
+        if(posts[i].contentType=="text/image"){
+        }
         searchResultPosts.push(posts[i]);
+        
       }
     }
   }
