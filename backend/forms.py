@@ -13,3 +13,7 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "display_name", "github_url", "profile_image")
+
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    file = forms.FileField()

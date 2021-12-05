@@ -162,4 +162,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+# https://www.youtube.com/watch?v=psOQBoAmMhA
+MEDIA_ROOT = BASE_DIR / 'static' / 'uploads'
+
 django_on_heroku.settings(locals())

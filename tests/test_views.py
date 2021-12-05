@@ -871,12 +871,12 @@ class InboxViewTest(TestCase):
 
         post_data = {
             "type":"post",
-            "id":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
-            "url":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "id":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "url":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
             "title":"Test Title",
-            "host":"http://127.0.0.1:8000/",
-            "source":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
-            "origin":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "host":"https://cmput-404-social-distribution.herokuapp.com/",
+            "source":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "origin":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
             "description":"Test Post",
             "contentType":"text/plain",
             "content":"test text",

@@ -9,6 +9,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
 from rest_framework.request import Request
+import os
+import base64
 
 from social_dist.settings import DJANGO_DEFAULT_HOST 
 
@@ -112,6 +114,9 @@ class Post(models.Model):
     #https://www.geeksforgeeks.org/booleanfield-django-models/ for boolean fields
     unlisted = models.BooleanField(default=False)
 
+    #https://www.youtube.com/watch?v=psOQBoAmMhA
+    image = models.ImageField(blank=True, upload_to = "images/")
+
     def __str__(self) -> str:
         return self.title + " (" + str(self.id) + ")"
     
@@ -173,6 +178,27 @@ class Post(models.Model):
         This will return the source url based on the post's source and post id
         """
         return str(self.source)  + 'posts/' + str(self.id)
+    #https://djangosnippets.org/snippets/10616/
+    def image_as_base64():
+        """
+        :param `image_file` for the complete path of image.
+        :param `format` is format for image, eg: `png` or `jpg`.
+        """
+
+        image_file = settings.MEDIA_ROOT + self.image.path
+        if (self.content_type == "image/png;base64"):
+            format = 'png'
+        elif (self.content_type == "image/jpeg;base64"):
+            format = 'jpg'
+        else:
+            return None
+        if not os.path.isfile(image_file):
+            return None
+    
+        encoded_string = ''
+        with open(image_file, 'rb') as img_f:
+            encoded_string = base64.b64encode(img_f.read())
+        return 'data:image/%s;base64,%s' % (format, encoded_string)
 
 
 class Comment(models.Model):

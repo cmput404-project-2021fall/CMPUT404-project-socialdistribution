@@ -24,7 +24,7 @@ from drf_yasg.utils import swagger_auto_schema
 from .utils import *
 from .serializers import AuthorSerializer, CommentSerializer, FriendRequestSerializer, PostSerializer, LikeSerializer
 from .models import Author, FriendRequest, Post, Comment, Like, Inbox
-from .forms import SignUpForm
+from .forms import SignUpForm, UploadFileForm
 from .permission import IsAuthenticated, IsAuthorOrReadOnly, IsLocalAuthor
 from .converter import *
 from .node_connections import send_post_to_foreign_authors, send_to_friends, async_update_db, send_friend_request, send_like
@@ -523,6 +523,8 @@ class PostDetail(APIView):
             request_dict['author'] = AuthorSerializer(author).data
             post_serializer = PostSerializer(data=request_dict)
 
+
+
             if post_serializer.is_valid():
                 post = post_serializer.save()
                 post.update_url_field()
@@ -530,6 +532,16 @@ class PostDetail(APIView):
                     post.categories = json.dumps(request_dict['categories'])
                     post.save()
                 post_dict = post_serializer.data
+                if ((post_dict['contentType'] == 'image/png;base64') or (post_dict['contentType'] == 'image/jpeg;base64')):
+                    try:
+                        #https://docs.djangoproject.com/en/3.2/topics/http/file-uploads/
+                        form = UploadFileForm(request.POST, request.FILES)
+                        if form.is_valid():
+                            post.image=request.FILES['file']
+                            post.save()
+                    except:
+                        #do nothing
+                        pass
                 # Send to friends if visibility is set to FRIENDS
                 if post_dict['visibility'] == 'FRIENDS':
                     send_to_friends(author, post_dict)
