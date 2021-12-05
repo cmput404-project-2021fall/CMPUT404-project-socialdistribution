@@ -43,17 +43,43 @@ function PostForm() {
       : ""
   );
 
+  const encodeFileBase64 = () => {
+    var reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        var Base64 = reader.result;
+        dispatch(createPost(title, Base64, contentType, visibility));
+
+      };
+      reader.onerror = (error) => {
+        console.log("error: ", error);
+      };
+    }else{
+      setMessage("Please upload an image");
+    }
+  }; 
+
   const submitHandler = (e) => {
     e.preventDefault();
+    if(cate=="text/image"){
+      // encode to base64 and dispatch
+      if(title == ""){
+        setMessage("Please fill in title to make a post.");
+      }
+      else{
+        encodeFileBase64();
+      }
+    }
+    else{
     if (title == "" || content == "") {
       setMessage("Please fill in title and content to make a post.");
-      dispatch(createPost(title, file, "image/png", visibility));
-
     } else {
       // remove extra message banner
       setMessage();
-      // dispatch(createPost(title, content, contentType, visibility));
-    }
+
+      dispatch(createPost(title, content, contentType, visibility));
+    }}
   };
 
   const fileHandler = (e) => {
