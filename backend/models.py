@@ -21,7 +21,7 @@ class Author(models.Model):
     # Remote authors will have null values for users
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True) 
     # The followers of this author, not a bidirectional relationship 
-    followers = models.ManyToManyField('self', related_name='follower', blank=True, symmetrical=False)
+    followers = models.ManyToManyField('self', related_name='following', blank=True, symmetrical=False)
     # The URL for the home host of the author
     host = models.URLField(editable=False, default=DJANGO_DEFAULT_HOST)
     # The URL for the author's profile
