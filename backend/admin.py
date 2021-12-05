@@ -23,7 +23,7 @@ class InboxAdmin(admin.ModelAdmin):
     list_display = ['id']
 
 class NodeAdmin(admin.ModelAdmin):
-    list_display = ['host','require_auth']
+    list_display = ['host', 'connect', 'require_auth', 'team_name']
     ordering = ['host']
     actions = [set_require_auth, set_no_require_auth]
 

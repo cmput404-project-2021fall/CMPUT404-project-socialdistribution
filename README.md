@@ -73,7 +73,7 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As an author, I want to like posts that I can access
 - :white_check_mark: - :white_check_mark: As an author, my server will know about my friends
 - :white_check_mark: - :white_check_mark: As an author, When I befriend someone it follows them, only when the other authors befriends me do I count as a real friend.
-- :black_square_button: - :white_check_mark: As an author, I want to know if I have friend requests.
+- :white_check_mark: - :white_check_mark: As an author, I want to know if I have friend requests.
 - :white_check_mark: - :white_check_mark: As an author I should be able to browse the public posts of everyone
 - :white_check_mark: - :white_check_mark: As a server admin, I want to be able to add nodes to share with
 - :white_check_mark: - :white_check_mark: As a server admin, I want to be able to remove nodes and stop sharing with them.

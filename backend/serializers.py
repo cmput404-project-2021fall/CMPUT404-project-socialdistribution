@@ -98,7 +98,11 @@ class PostSerializer(serializers.ModelSerializer):
         return post
     
     def get_categories(self, obj):
-        return json.loads(obj.categories)
+        try:
+            json_list = json.loads(obj.categories)
+        except:
+            json_list = []
+        return json_list
 
     def get_commentsSrc(self, obj):
         comments_list = list(obj.comments.all())
