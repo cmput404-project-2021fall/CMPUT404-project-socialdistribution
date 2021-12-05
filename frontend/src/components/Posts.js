@@ -172,7 +172,11 @@ function Posts(prop) {
           <Card.Title className="m-3 text-center">
             <u>{prop.post.title}</u>
           </Card.Title>
+          {prop.post&&prop.post.contentType != "text/image" ? (
           <Card.Text className="mx-3 my-4">{content}</Card.Text>
+          ): (<img width="300" src={prop.post.content? "data:image/png;base64"+prop.post.content:null}></img>
+          )}  
+
           <Row className="justify-content-between m-1">
             <Col className="d-flex align-items-center">
               Likes: {numLikes}&nbsp;&nbsp;&nbsp; Comments:{" "}
