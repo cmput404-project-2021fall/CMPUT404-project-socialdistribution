@@ -79,8 +79,8 @@ function HomeContent() {
     for(var i=0;i<githubEvent.length;i++){
       var githubActivity = {
         "user_name": githubEvent[i].actor.display_login,
-        "type": githubEvent[i].type == "PushEvent" ? "push"
-            : githubEvent[i].type == "PullRequestEvent" ? "pull"
+        "type": githubEvent[i].type == "PushEvent" ? "push to"
+            : githubEvent[i].type == "PullRequestEvent" ? "pull from"
             : githubEvent[i].type == "CreateEvent" ? "create"
             : githubEvent[i].type == "WatchEvent" ? "watch"
             : "",
