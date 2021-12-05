@@ -755,7 +755,8 @@ class InboxViewTest(TestCase):
             "2f91a911-850f-4655-ac29-9115822c72b5",
             "2f91a911-850f-4655-ac29-9115822c72b6",
             "2f91a911-850f-4655-ac29-9115822c72b7",
-            "2f91a911-850f-4655-ac29-9115822c72b9"
+            "2f91a911-850f-4655-ac29-9115822c72b9",
+            "2f91a911-850f-4655-ac29-9115822c72b8"
         ]
         number_of_authors = len(uuid_list)
         User.objects.bulk_create([
@@ -822,6 +823,8 @@ class InboxViewTest(TestCase):
         inbox.likes.add(post_like)
         inbox.friend_requests.add(friend_request)
 
+        authors[4].followers.add(authors[0])
+
         #node = Node.objects.create(
         #    host = "https://cmput-404-social-distribution.herokuapp2.com/",
         #    auth_info = "username:password",
@@ -869,9 +872,24 @@ class InboxViewTest(TestCase):
         put_data = {
             "type":"Follow",
         }
-        put_res = self.client.put("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/followers/2f91a911-850f-4655-ac29-9115822c72b6",data=put_data,follow=True,content_type="application/json",**header)
+        put_res = self.client.put("/api/author/2f91a911-850f-4655-ac29-9115822c72b6/followers/2f91a911-850f-4655-ac29-9115822c72b5",data=put_data,follow=True,content_type="application/json",**header)
         self.assertEqual(put_res.status_code,200)
         self.assertEqual(1,len(inbox.friend_requests.all()))
+
+        author2=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b8")
+        author_serializer2 = AuthorSerializer(author2)
+        author_dict2 = author_serializer2.data
+        post_data2 = {
+            "type":"Follow",
+            "summary":"Test friend request",
+            "object": author_dict0,
+            "actor": author_dict2,
+            
+        }
+        post_res2 = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data2,follow=True,content_type="application/json",**header)
+        self.assertEqual(post_res2.status_code,200)
+        self.assertEqual(1,len(inbox.friend_requests.all()))
+        self.assertEqual(2,len(author0.followers.all()))
 
     def test_inbox_post_post(self):
         author0=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b5")
