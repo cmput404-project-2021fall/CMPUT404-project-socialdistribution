@@ -51,8 +51,8 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As an author, posts I make can be in CommonMark
 - :white_check_mark: - :white_check_mark: As an author, I want a consistent identity per server
 - :white_check_mark: - :white_check_mark: As a server admin, I want to host multiple authors on my server
-- :black_square_button: - :black_square_button: As a server admin, I want to share public images with users on other servers.
-- :black_square_button: - :black_square_button: As an author, I want to pull in my github activity to my "stream"
+- :white_check_mark: - :white_check_mark: As a server admin, I want to share public images with users on other servers.
+- :white_check_mark: - :white_check_mark: As an author, I want to pull in my github activity to my "stream"
 - :white_check_mark: - :white_check_mark: As an author, I want to post posts to my "stream"
 - :white_check_mark: - :white_check_mark: As an author, I want to delete my own public posts.
 - :black_square_button: - :white_check_mark: As an author, I want to befriend local authors
