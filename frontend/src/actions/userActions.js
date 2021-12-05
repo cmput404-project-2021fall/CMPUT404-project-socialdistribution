@@ -451,7 +451,7 @@ export const getFollowerList = () => async (dispatch, getState) => {
   }
 };
 
-export const getGithubEvent = () => async (dispatch, getState) => {
+export const getGithubEvent = (github_id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: GITHUB_EVENT_REQUEST,
@@ -464,10 +464,11 @@ export const getGithubEvent = () => async (dispatch, getState) => {
     const config = {
       headers: {
         "Content-type": "application/json",
+        "Accept": "application/vnd.github.v3+json",
       },
     };
-
-    const { data } = await axios.get(`https://api.github.com/users/IvanZyf666/events`, config);
+    
+    const { data } = await axios.get(`https://api.github.com/users/${github_id}/events`, config);
     dispatch({
       type: GITHUB_EVENT_SUCCESS,
       payload: data,
