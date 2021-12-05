@@ -4,7 +4,7 @@ import Posts from "./Posts";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import { getPosts, getLikedPosts } from "../actions/postActions";
-import { getGithubEvent } from "../actions/userActions";
+import { getGithubEvent, getAuthorDetail } from "../actions/userActions";
 
 // Content of home page; tabs to select which list of posts to view
 function HomeContent() {
@@ -18,6 +18,16 @@ function HomeContent() {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const userDetail = useSelector((state) => state.userDetail);
+  
+  // debug why only 
+  useEffect(() => {
+    dispatch(getAuthorDetail());
+  },[]);
+
+  const github_url = userDetail ? userDetail.userInfo:"";
+  const github_id = github_url && github_url.github ? github_url.github.match('[^/]+(?!.*/)')[0]:"";
+  
   const postList = useSelector((state) => state.postList);
   const { error, success, post } = postList;
 
@@ -54,7 +64,9 @@ function HomeContent() {
   // add github event to stream
   const githubData = useSelector((state) => state.githubEvent);
   useEffect(() => {
-    dispatch(getGithubEvent());
+    if(github_id){
+      dispatch(getGithubEvent(github_id));
+    }
   }, []);
 
   const githubEvent = githubData.loading == false ?
@@ -62,9 +74,6 @@ function HomeContent() {
 
   var githubActivities = [];
   var githubAvatarUrl = ""; 
-
-  console.log("github event");
-  console.log(githubEvent);
 
   if(githubEvent){
     for(var i=0;i<githubEvent.length;i++){
@@ -153,6 +162,15 @@ function HomeContent() {
           posts.map((p) =>
             isMyPost(p) ? <Posts post={p} liked={likedPosts} /> : ""
           )
+        : githubActivities.length == 0 
+        ? (
+          <Card className="m-5">
+            <Card.Body>
+              <Card.Title className="m-3 text-center">
+                No activity available.
+              </Card.Title>
+            </Card.Body>
+            </Card>)
         :(
           githubActivities.map((p) =>
             <Card className="m-5">
