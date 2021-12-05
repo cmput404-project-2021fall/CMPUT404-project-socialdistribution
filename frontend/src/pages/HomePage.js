@@ -4,7 +4,7 @@ import Headers from "../components/Headers";
 import SideBar from "../components/SideBar";
 import HomeContent from "../components/HomeContent";
 import { Link } from "react-router-dom";
-
+import { getAllNotifications } from "../actions/postActions";
 import { useDispatch, useSelector } from "react-redux";
 
 function HomePage() {

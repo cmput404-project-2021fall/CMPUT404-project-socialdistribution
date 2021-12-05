@@ -383,7 +383,7 @@ export const sendFriendRequest =
         `/api/author/${their_id}/inbox/`,
         {
           type: "Follow",
-          summary: `${userInfo.author.displayName} wants to follow you.`,
+          summary: `${userInfo.author.displayName} wants to be your friend.`,
           actor: my_object,
           object: their_object,
         },
