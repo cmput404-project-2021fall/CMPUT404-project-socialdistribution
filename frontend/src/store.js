@@ -14,6 +14,7 @@ import {
   followerListReducer,
   userListReducer,
   githubEventReducer,
+  unfollowReducer,
 } from "./reducers/userReducers";
 import {
   postCreateReducer,
@@ -46,6 +47,7 @@ const reducer = combineReducers({
   getNotifications: getNotificationsReducer,
   userList: userListReducer,
   githubEvent: githubEventReducer,
+  unfollow: unfollowReducer,
 });
 const userInfoFromStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))
