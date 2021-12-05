@@ -289,7 +289,7 @@ class FollowerDetail(APIView):
             return Response(follower_dict)
 
         # Get the list of the author's followers
-        followers = list(author.followers.all().order_by('display_name'))
+        followers = list(author.followers.order_by('display_name'))
         follower_serializer = AuthorSerializer(followers, many=True)
         followers_dict = {
             "type": "followers",
@@ -901,11 +901,15 @@ class InboxDetail(APIView):
                 if DJANGO_DEFAULT_HOST.split('//')[1].split('/api/')[0] not in author.url:
                     send_friend_request(author,request_dict)
                 inbox.friend_requests.add(friend_request)
-                friend_request.actor.followers.add(author)
-                existing_friend_request = get_friend_request(author,friend_request.actor)
+                author.followers.add(friend_request.actor)
+                existing_friend_request = get_friend_request(friend_request.actor,author)
                 if (existing_friend_request != None):
                     existing_friend_request.delete()
-                return Response(data={'detail':"Successfully created Friend Request from {} to {} and send to recipient's inbox".format(friend_request.actor.id, author_id)}, status=200)            
+                if (author in friend_request.actor.followers.all()):
+                    friend_request.delete()
+                    return Response(data={'detail':"Friendship between {} to {} and established".format(friend_request.actor.id, author_id)}, status=200)
+                else:
+                    return Response(data={'detail':"Successfully created Friend Request from {} to {} and send to recipient's inbox".format(friend_request.actor.id, author_id)}, status=200)            
             
             return Response(data={'detail':"Friend Request from {} to {} already been sent".format(friend_request.actor.id, author_id)}, status=200)   
 
