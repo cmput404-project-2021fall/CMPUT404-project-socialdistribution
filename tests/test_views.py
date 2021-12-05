@@ -823,13 +823,23 @@ class InboxViewTest(TestCase):
         inbox.likes.add(post_like)
         inbox.friend_requests.add(friend_request)
 
+
+        inbox2 = Inbox.objects.create(
+            id = authors[4]
+        )
         authors[4].followers.add(authors[0])
 
-        #node = Node.objects.create(
-        #    host = "https://cmput-404-social-distribution.herokuapp2.com/",
-        #    auth_info = "username:password",
-        #    connect = False
-        #)
+        friend_request2 = FriendRequest.objects.create(
+            actor = authors[0],
+            object = authors[4]
+        )
+        inbox2.friend_requests.add(friend_request2)
+
+        node = Node.objects.create(
+            host = "https://cmput-404-social-distribution.herokuapp2.com/",
+            auth_info = "username:password",
+            connect = False
+        )
     def test_inbox_get(self):
         #test the external inbox API
         get_res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",follow=True,content_type="application/json",**header)
@@ -876,9 +886,12 @@ class InboxViewTest(TestCase):
         self.assertEqual(put_res.status_code,200)
         self.assertEqual(1,len(inbox.friend_requests.all()))
 
+        #now test to see if we make a friend request to someone who is already following us that it doesn't create a friend request just adds a following and removes
+        #the irrelevant friend request
         author2=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b8")
         author_serializer2 = AuthorSerializer(author2)
         author_dict2 = author_serializer2.data
+        inbox2 = Inbox.objects.get(id=author2)
         post_data2 = {
             "type":"Follow",
             "summary":"Test friend request",
@@ -886,10 +899,20 @@ class InboxViewTest(TestCase):
             "actor": author_dict2,
             
         }
+        self.assertEqual(1,len(author0.followers.all()))
+        self.assertEqual(1,len(inbox.friend_requests.all()))
+        self.assertEqual(1,len(inbox2.friend_requests.all()))
         post_res2 = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data2,follow=True,content_type="application/json",**header)
         self.assertEqual(post_res2.status_code,200)
+        self.assertEqual(0,len(inbox2.friend_requests.all()))
         self.assertEqual(1,len(inbox.friend_requests.all()))
         self.assertEqual(2,len(author0.followers.all()))
+
+        #make sure they are friends
+        res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72b8/friends",**header)
+        body = json.loads(res.content.decode("utf-8"))
+        self.assertEqual(len(body["items"]), 1)
+
 
     def test_inbox_post_post(self):
         author0=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b5")
@@ -936,7 +959,7 @@ class InboxViewTest(TestCase):
 
         get_post_res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",**header)
         self.assertEqual(get_post_res.status_code,200)
-    """
+
     def test_inbox_post_post_with_foreign_node(self):
         author0=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b5")
         author1=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b6")
@@ -1008,7 +1031,6 @@ class InboxViewTest(TestCase):
         self.assertEqual(post_res.status_code,403)
         self.assertEqual(1,len(inbox.posts.all()))
         self.assertEqual(0,len(author1.posted.all()))
-        """
 
 
         
