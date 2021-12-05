@@ -47,11 +47,20 @@ function PostForm() {
     e.preventDefault();
     if (title == "" || content == "") {
       setMessage("Please fill in title and content to make a post.");
-      console.log(file);
+      // console.log(file);
+      // console.log(content);
+      
+      // setContentType("wefwef");
+      // console.log(contentType);
+      dispatch(createPost(title, file, "image/png", visibility));
+
     } else {
       // remove extra message banner
       setMessage();
-      dispatch(createPost(title, content, contentType, visibility));
+      console.log(file);
+      console.log(content);
+      console.log(contentType);
+      // dispatch(createPost(title, content, contentType, visibility));
     }
   };
 
