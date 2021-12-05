@@ -21,18 +21,9 @@ function HomeContent() {
   const userDetail = useSelector((state) => state.userDetail);
   const { userInfo: userDetailInfo } = userDetail;
 
-  console.log(userDetailInfo);
-
-  // debug why only
   useEffect(() => {
     dispatch(getAuthorDetail());
   }, []);
-
-  const github_url = userDetail ? userDetail.userInfo : "";
-  const github_id =
-    github_url && github_url.github
-      ? github_url.github.match("[^/]+(?!.*/)")[0]
-      : "";
 
   const postList = useSelector((state) => state.postList);
   const { error, success, post } = postList;
@@ -63,13 +54,20 @@ function HomeContent() {
     }
   };
 
+  const github_url = userDetailInfo ? userDetailInfo : "";
+  
+  const github_id =
+    github_url && github_url.github
+      ? github_url.github.match("[^/]+(?!.*/)")[0]
+      : "";
+      
   // add github event to stream
   const githubData = useSelector((state) => state.githubEvent);
   useEffect(() => {
     if (github_id) {
       dispatch(getGithubEvent(github_id));
     }
-  }, []);
+  }, [github_id]);
 
   const githubEvent = githubData.loading == false ? githubData.response : [];
 
