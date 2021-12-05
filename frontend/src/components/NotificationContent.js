@@ -53,7 +53,6 @@ function NotificationContent(prop) {
           ) : (
             <Alert variant="primary">{prop.notification.summary}</Alert>
           )}
-
           {prop.notification.type == "Follow" ? (
             <Button className="m-1" variant="success">
               Accept
