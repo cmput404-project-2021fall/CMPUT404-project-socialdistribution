@@ -41,10 +41,6 @@ export const createPost =
           Authorization: `Token ${userInfo.token}`,
         },
       };
-      console.log("start");
-      console.log(content);
-      console.log(contentType);
-      console.log("over");
 
       const { data } = await axios.post(
         `/api/author/${userInfo.author_id}/posts/`,
