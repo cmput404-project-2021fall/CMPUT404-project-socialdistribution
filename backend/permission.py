@@ -73,6 +73,20 @@ class IsAuthenticated(permissions.BasePermission):
             #do nothing
             pass
         try:
+            # Check for auth token
+            # https://stackoverflow.com/questions/10613315/accessing-request-headers-on-django-python
+            basic_auth_field = request.META['HTTP_AUTHORIZATION']
+            basic_auth_base64 = basic_auth_field.split("Basic ")[1]
+            basic_auth_bytes = base64.b64decode(basic_auth_base64) 
+            basic_auth_value = basic_auth_bytes.decode('utf-8')
+            # Get the node from the request(will fail if node is not in our database)
+            node = Node.objects.get(auth_info=basic_auth_value)
+            # if auth token is found return true
+            return True
+        # If not found check if the remote is allowed to connect without auth?
+        except Exception as e:
+            print(f"IsAuthenticated.has_permission Exception: {type(e)}\n{str(e)}")
+        try:
             # Grab the uri from the remote request
             request_uri = str(request.META['HTTP_REFERER'])
             # Get the hostname of the remote request
@@ -81,13 +95,7 @@ class IsAuthenticated(permissions.BasePermission):
             # Check if the node requires auth
             if not node.require_auth:
                 return True
-            # https://stackoverflow.com/questions/10613315/accessing-request-headers-on-django-python
-            basic_auth_field = request.META['HTTP_AUTHORIZATION']
-            basic_auth_base64 = basic_auth_field.split("Basic ")[1]
-            basic_auth_bytes = base64.b64decode(basic_auth_base64) 
-            basic_auth_value = basic_auth_bytes.decode('utf-8')
-            # Get the node from the request(will fail if node is not in our database)
-            node = Node.objects.get(auth_info=basic_auth_value)
-        except:
+        except Exception as e:
+            print(f"IsAuthenticated.has_permission Exception: {type(e)}\n{str(e)}")
             return False
-        return True
+        return False

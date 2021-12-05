@@ -94,15 +94,15 @@ class Post(models.Model):
     # which host is it actually from
     origin = models.URLField(max_length=500, default=DJANGO_DEFAULT_HOST)
     # A tweet length description of the post
-    description = models.CharField(max_length=240, blank=True, default=" ")
+    description = models.CharField(max_length=240, blank=True, null=True, default="")
     # The content type for the HTTP header
     content_type = models.CharField(max_length=30, choices = CONTENT_TYPES, default="text/plain")
     # The main content of the post
-    content = models.TextField(blank=True)
+    content = models.TextField(blank=True, null=True)
     # The author object of who created the post
     author = models.ForeignKey(Author, on_delete = models.CASCADE, related_name='posted')
     # Categories is represented as a stringify JSON list 
-    categories = models.TextField(default='[]')
+    categories = models.TextField(default='[]', null=True)
     # When the post was published
     published = models.DateTimeField('date published', default=now)
     # What is the visibility level of the Post
@@ -274,7 +274,7 @@ class Node(models.Model):
     host = models.URLField(primary_key=True)
     #basic auth info that must be provided by remote server when making requests to our server
     auth_info = models.CharField(max_length=100)
-
+    team_name = models.CharField(max_length=20, blank=True)
     #basic auth info that must be provided by our server when making requests to foreign servers
     requesting_auth_info = models.CharField(max_length=100, blank=True)
 
@@ -283,6 +283,9 @@ class Node(models.Model):
 
     # Check if authentication is required
     require_auth = models.BooleanField(default=True)
+
+    # Use auth to connect
+    connect_with_auth = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.host)

@@ -2,8 +2,10 @@ import uuid
 import requests
 import time
 import json
+from urllib.parse import urlparse
 import threading
 import traceback
+import inspect
 from concurrent.futures import ThreadPoolExecutor
 
 from .serializers import PostSerializer
@@ -51,34 +53,76 @@ def async_get(url, auth=None, headers=None, params=None, object_instance=None):
     """
     This is a callback function that will async get a json object from the url provided
     """
+    host_name = urlparse(url).netloc
+    node = Node.objects.get(host__icontains=str(host_name))
+    # If the api endpoint is not in the url then we add it
+    if node.host.split('//')[1] not in url:
+        url = url.split('//')[1]
+        # find the path
+        path = url[url.find('/') + 1:]
+        url = str(node.host) + path
+    if auth != None:
+        if node.connect_with_auth:
+            auth_info = auth
+        else:
+            auth_info = None
+    else:
+        auth_info = auth
     res = requests.get(
         url,
         headers=headers,
-        auth=auth,
+        auth=auth_info,
         params=params,
     )
     if res.status_code not in range(200, 300):
         print(f"async_get error: {url} {res.status_code}\nheaders={headers}\nauth={auth}\nparams={params}")
         return {}
-    res_dict = res.json()
-    res_dict['object_instance'] = object_instance
+    try:
+        res_dict = res.json()
+        if isinstance(res_dict, list) and len(res_dict) > 0:
+            res_dict = res_dict[0]
+        elif isinstance(res_dict, list) and len(res_dict) == 0:
+            res_dict = {}
+        res_dict['object_instance'] = object_instance
+    except Exception as e:
+        print("async_get Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
+        return {}
     return res_dict
 
 def async_post(url, auth=None, headers=None, params=None, data=None):
     """
     This is a callback function that will async post a json object to the url provided
     """
+    host_name = urlparse(url).netloc
+    node = Node.objects.get(host__icontains=str(host_name))
+    # If the api endpoint is not in the url then we add it
+    if node.host.split('//')[1] not in url:
+        url = url.split('//')[1]
+        # find the path
+        path = url[url.find('/') + 1:]
+        url = str(node.host) + path
+    if auth != None:
+        if node.connect_with_auth:
+            auth_info = auth
+        else:
+            auth_info = None
+    else:
+        auth_info = auth
     res = requests.post(
         url,
         headers=headers,
-        auth=auth,
+        auth=auth_info,
         params=params,
         json=data,
     )
     if res.status_code not in range(200, 300):
         print(f"async_post error: {url} {res.status_code}\nheaders={headers}\nauth={auth}\nparams={params}\ndata={data}")
         return {}
-    res_dict = res.json()
+    try:
+        res_dict = res.json()
+    except Exception as e:
+        print("async_post Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
+        return {}
     return res_dict
 
 def send_post_to_foreign_authors(post: Post):
@@ -98,7 +142,7 @@ def send_post_to_foreign_authors(post: Post):
             if res.status_code not in range(200, 300):
                 print(f"Something went wrong with the sending\n\n{res.status_code} {res.text}")
     except Exception as e:
-        print("send_post_to_foreign_authors Exception: {}\n\n{}".format(type(e), str(e)))
+        print("send_post_to_foreign_authors Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
 def send_to_friends(author: Author, payload: dict):
     """
@@ -135,8 +179,11 @@ def send_to_friends(author: Author, payload: dict):
                 continue
             # Strip off the schema
             node = Node.objects.get(host__icontains=str(friend.host).split('//')[1])
-            user, passwd = str(node.requesting_auth_info).split(':')
-            auth_info = (user, passwd)
+            if node.connect_with_auth:
+                user, passwd = str(node.requesting_auth_info).split(':')
+                auth_info = (user, passwd)
+            else:
+                auth_info = None
             post_header = None
             friend_url_list.append(friend_url)
             auth_info_list.append(auth_info)
@@ -144,13 +191,87 @@ def send_to_friends(author: Author, payload: dict):
             param_list.append(None)
             data_list.append(payload)
 
-        with ThreadPoolExecutor(max_workers=20) as pool:
+        with ThreadPoolExecutor(max_workers=1) as pool:
             res_friend_inbox_obj_list = list(pool.map(async_post, friend_url_list, auth_info_list, header_list, param_list, data_list))
             
     except Exception as e:
         print("send_to_friends Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
+def send_friend_request(author: Author, payload: dict):
+    """
+    This will send payload to the authors foreign inbox
 
+    args:
+        author: The author object to send to
+        payload: The json object to send
+    """
+    try:
+        internal_post_dict = sanitize_post_dict(payload)
+
+        friend_url_list = []
+        auth_info_list = []
+        header_list = []
+        param_list = []
+        data_list = []
+
+        friend_url = author.url + '/inbox/'
+        # Strip off the schema
+        node = Node.objects.get(host__icontains=str(author.host).split('//')[1])
+        if node.connect_with_auth:
+            user, passwd = str(node.requesting_auth_info).split(':')
+            auth_info = (user, passwd)
+        else:
+            auth_info = None
+        post_header = None
+        friend_url_list.append(friend_url)
+        auth_info_list.append(auth_info)
+        header_list.append(post_header)
+        param_list.append(None)
+        data_list.append(payload)
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            res_friend_inbox_obj_list = list(pool.map(async_post, friend_url_list, auth_info_list, header_list, param_list, data_list))
+            
+    except Exception as e:
+        print("send_friend_request Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
+
+def send_like(author: Author, payload: dict):
+    """
+    This will send payload to the authors foreign inbox
+
+    args:
+        author: The author object to send to
+        payload: The json object to send
+    """
+    try:
+        internal_post_dict = sanitize_post_dict(payload)
+
+        friend_url_list = []
+        auth_info_list = []
+        header_list = []
+        param_list = []
+        data_list = []
+
+        friend_url = author.url + '/inbox/'
+        # Strip off the schema
+        node = Node.objects.get(host__icontains=str(author.host).split('//')[1])
+        if node.connect_with_auth:
+            user, passwd = str(node.requesting_auth_info).split(':')
+            auth_info = (user, passwd)
+        else:
+            auth_info = None
+        post_header = None
+        friend_url_list.append(friend_url)
+        auth_info_list.append(auth_info)
+        header_list.append(post_header)
+        param_list.append(None)
+        data_list.append(payload)
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            res_friend_inbox_obj_list = list(pool.map(async_post, friend_url_list, auth_info_list, header_list, param_list, data_list))
+            
+    except Exception as e:
+        print("send_friend_request Exception: {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
 # Update Posts
 def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_profile = True):
@@ -165,7 +286,7 @@ def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_pro
         remote_authors_host = Author.objects.filter(id__in=foreign_author_ids).values_list('url', flat=True)
         post_dict_list = []
 
-        with ThreadPoolExecutor(max_workers=20) as pool:
+        with ThreadPoolExecutor(max_workers=1) as pool:
             urls = [author_url + '/posts/' for author_url in remote_authors_host]
             user, passwd = auth.split(':')
             auths = [(user, passwd)]*len(urls)
@@ -183,7 +304,7 @@ def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_pro
             CRUD_remote_post(host, auth, post_dict_list)
 
     except Exception as e:
-        print("update_remote_posts exception : {}\n\n{}".format(type(e), str(e)))
+        print("update_remote_posts exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
         return []
     
     if time_profile:
@@ -220,8 +341,8 @@ def update_remote_comments(host: str, auth: str, foreign_post_ids: list, time_pr
         remote_comment_url_post_id = Post.objects.filter(id__in=foreign_post_ids).values_list('comment_url', 'id')
         comment_dict_list = []
 
-        with ThreadPoolExecutor(max_workers=20) as pool:
-            urls = [comment_url_post_id[0] for comment_url_post_id in remote_comment_url_post_id]
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            urls = [comment_url_post_id[0] + '/' if 'plurr' in comment_url_post_id[0] else comment_url_post_id[0] for comment_url_post_id in remote_comment_url_post_id]
             post_objs = [Post.objects.get(id=comment_url_post_id[1]) for comment_url_post_id in remote_comment_url_post_id]
             user, passwd = auth.split(':')
             auths = [(user, passwd)]*len(urls)
@@ -231,7 +352,11 @@ def update_remote_comments(host: str, auth: str, foreign_post_ids: list, time_pr
 
             for res_comment_obj in res_comment_obj_list:
                 post_obj = res_comment_obj['object_instance']
-                for raw_comment in res_comment_obj['comments']:
+                key = 'comments'
+                # Check if the list of comments is under the 'items' key
+                if 'items' in res_comment_obj:
+                    key = 'items'
+                for raw_comment in res_comment_obj[key]:
                     comment = sanitize_comment_dict(raw_comment, post_obj, host)
                     # If comment is None or the key 'id' is not in comment then we ignore it.
                     if comment == None or 'id' not in comment:
@@ -239,7 +364,7 @@ def update_remote_comments(host: str, auth: str, foreign_post_ids: list, time_pr
                     comment_dict_list.append(comment)
             CRUD_remote_comments(host, auth, comment_dict_list)
     except Exception as e:
-        print("update_remote_comments exception : {}\n\n{}".format(type(e), str(e)))
+        print("update_remote_comments exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
         return []
 
     if time_profile:
@@ -270,8 +395,8 @@ def update_remote_likes(host: str, auth: str, foreign_author_ids: list, time_pro
         remote_authors_host = Author.objects.filter(id__in=foreign_author_ids).values_list('url', flat=True)
         likes_dict_list = []
 
-        with ThreadPoolExecutor(max_workers=20) as pool:
-            urls = [author_url + '/liked' for author_url in remote_authors_host]
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            urls = [author_url + '/liked/' if 'plurr' in author_url else author_url + '/liked' for author_url in remote_authors_host]
             user, passwd = auth.split(':')
             auths = [(user, passwd)]*len(urls)
             headers = [{'Accept': 'application/json'}]*len(urls)
@@ -280,6 +405,8 @@ def update_remote_likes(host: str, auth: str, foreign_author_ids: list, time_pro
             res_likes_obj_list = list(pool.map(async_get, urls, auths, headers, params))
 
             for res_likes_obj in res_likes_obj_list:
+                if 'items' not in res_likes_obj:
+                    continue
                 for raw_likes in res_likes_obj['items']:
                     likes = sanitize_like_dict(raw_likes)
                     if likes == None:
@@ -288,8 +415,7 @@ def update_remote_likes(host: str, auth: str, foreign_author_ids: list, time_pro
         
             CRUD_remote_likes(likes_dict_list)
     except Exception as e:
-        print("update_remote_likes exception : {}\n\n{}".format(type(e), str(e)))
-        return []
+        print("update_remote_likes exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
     if time_profile:
         print(f'update_remote_likes time taken {time.time() - start_time} s')
@@ -312,7 +438,7 @@ def CRUD_remote_likes(likes_dict_list: list):
 # Update Author
 def update_remote_authors(host: str, auth: str, time_profile = True):
     """
-    This will make an author API request to the host using auth to get the list of current authors on the remote note and updating our database accordingly
+    This will make an author API request to the host using auth to get the list of current authors on the remote node and update our database accordingly
 
     args:
         host - The host url of the remote server
@@ -327,10 +453,15 @@ def update_remote_authors(host: str, auth: str, time_profile = True):
         url = host + 'authors/'
         query = {'page': 1, 'size': 1000}
         user, passwd = auth.split(':')
+        node = Node.objects.get(host=host)
+        if node.connect_with_auth:
+            auth_info = (user, passwd)
+        else:
+            auth_info = None
         res = requests.get(
             url,
             headers = {'Accept': 'application/json'},
-            auth=(user, passwd),
+            auth=auth_info,
             params=query
         )
         if res.status_code not in range(200, 300):
@@ -344,7 +475,7 @@ def update_remote_authors(host: str, auth: str, time_profile = True):
 
         CRUD_remote_authors(host, author_dict_list)
     except Exception as e:
-        print("update_remote_authors exception : {}\n\n{}".format(type(e), str(e)))
+        print("update_remote_authors exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
     if time_profile:
         print(f'update_remote_authors {time.time() - start_time} s')
@@ -368,3 +499,64 @@ def CRUD_remote_authors(host: str, author_dict_list: list):
 
     except Exception as e:
         print("CRUD_remote_authors exception : {}\n\n{}".format(type(e), str(e)))
+
+# Update remote followers
+def update_remote_followers(host: str, auth: str, foreign_author_ids: list, time_profile = True):
+    """
+    This will make an follower API request to the host using auth to get the list of followers to a remote author and update our database accordingly.
+
+    args:
+
+    return:
+    """
+    start_time = time.time()
+    try:
+        remote_authors_host = Author.objects.filter(id__in=foreign_author_ids).values_list('id','url')
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            id = [author[0] for author in remote_authors_host]
+            urls = [author[1] + '/followers' for author in remote_authors_host]
+            user, passwd = auth.split(':')
+            auths = [(user, passwd)]*len(urls)
+            headers = [{'Accept': 'application/json'}]*len(urls)
+            params = [None]*len(urls)
+    
+            
+            res_follower_obj_list = list(pool.map(async_get, urls, auths, headers, params, id))
+
+            for res_follower_obj in res_follower_obj_list:
+                author_id = res_follower_obj['object_instance']
+                author = Author.objects.get(id=author_id)
+                follower_dict_list = []
+                for raw_follower in res_follower_obj['items']:
+                    follower = sanitize_author_dict(raw_follower, host)
+                    if follower == None:
+                        continue
+                    follower_dict_list.append(follower)
+                CRUD_remote_authors(author, follower_dict_list)
+            # Add, update or delete posts based on the foreign state
+
+    except Exception as e:
+        print("update_remote_followers exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
+
+    if time_profile:
+        print(f'update_remote_followers {time.time() - start_time} s')
+
+    return [follower_dict['id'] for follower_dict in follower_dict_list]
+
+def CRUD_remote_followers(author: Author, follower_dict_list: list):
+    """
+    This will create, update or delete followers based on the remote responses
+    """
+    try:
+        for author_dict in follower_dict_list:
+            Author.objects.update_or_create(id=author_dict['id'], defaults=author_dict)
+        
+        ids = [author_dict['id'] for author_dict in follower_dict_list]
+        followers = Author.objects.filter(id__in=ids)
+
+        author.followers.set(followers)
+
+    except Exception as e:
+        print("CRUD_remote_followers exception : {}\n\n{}".format(type(e), str(e)))
+    

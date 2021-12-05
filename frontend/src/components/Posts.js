@@ -190,8 +190,8 @@ function Posts(prop) {
               <Button
                 className={
                   (userInfo && prop.post.visibility == "PUBLIC") ||
-                  (userInfo && prop.post.author.id == userInfo.author.id) ||
-                  prop.post.visibility == "PRIVATE"
+                    (userInfo && prop.post.author.id == userInfo.author.id) ||
+                    prop.post.visibility == "PRIVATE"
                     ? "m-1"
                     : "m-1 disabled"
                 }

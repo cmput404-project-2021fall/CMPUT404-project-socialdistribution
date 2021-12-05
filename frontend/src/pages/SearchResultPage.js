@@ -17,6 +17,10 @@ const SearchResultPage = (props) => {
   const postList = useSelector((state) => state.postList);
   const { post } = postList;
 
+  const getLiked = useSelector((state) => state.getLiked);
+  const { error: getLikedError, response } = getLiked;
+  const likedPosts = response ? response.items : [];
+
   const searchText = props.match.params.id;
 
   useEffect(() => {
@@ -28,7 +32,6 @@ const SearchResultPage = (props) => {
   const [message, setMessage] = useState("");
   const posts = post ? post.items : [];
 
-  console.log(posts);
   var searchResultPosts = [];
 
   if(searchText==" "){
@@ -37,12 +40,11 @@ const SearchResultPage = (props) => {
     }
   }else{
     for( var i=0;i<posts.length;i++){ 
-      if ( posts[i].title.indexOf(searchText) != -1) {
+      if ( (posts[i].title.indexOf(searchText) != -1) || (posts[i].content.indexOf(searchText) != -1)) {
         searchResultPosts.push(posts[i]);
       }
     }
   }
-
   return (
     <Container className="App fluid min-vh-100 min-vw-100 d-flex flex-column p-0">
       <Headers searchCategory={"post"}/>
@@ -57,7 +59,7 @@ const SearchResultPage = (props) => {
                 </Alert>    
                 </div>
                 {searchResultPosts.map((p) => (
-                  <Posts post={p} />
+                  <Posts post={p} liked={likedPosts}/>
                 ))}  
                               
         </Col>

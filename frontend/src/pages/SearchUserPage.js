@@ -8,6 +8,7 @@ import { getUsers } from "../actions/userActions";
 import Posts from "../components/Posts";
 import { LinkContainer } from "react-router-bootstrap";
 import Avatar from "../images/avatar.jpg";
+import PImage from "../images/dazhitouxiang.jpeg";
 
 const SearchUserPage = (props) => {
 
@@ -22,30 +23,26 @@ const SearchUserPage = (props) => {
   const userList = useSelector((state) => state.userList);
   useEffect(() => {
     dispatch(getUsers());
-  }, [dispatch]);
-  const users = userList.userList ? userList.userList.items : [];
+  }, []);
+  
+  const users = userList.response ? userList.response.items : [];
 
   var searchResultUsers = [];
 
   if(searchText==" "){
     for(var i=0; i<users.length; i++){
         if(users[i].displayName){
-            if(!users[i].profile_img){
-                users[i].profil_img=Avatar;
-            }
             searchResultUsers.push(users[i]);  
         }  
     }
   }else{
     for(var i=0; i<users.length; i++){
-        if(users[i].displayName.indexOf(searchText)!=-1){
+        if(users[i].displayName && users[i].displayName.indexOf(searchText)!=-1){
             if(!users[i].profile_img){
                 users[i].profil_img=Avatar;
             }
           searchResultUsers.push(users[i]);
-          
         }
-        console.log("haha");
     }
   }
 
@@ -61,7 +58,7 @@ const SearchUserPage = (props) => {
                 <div>
                 <Alert className="m-1" variant="info">
                   Search results for users
-                </Alert>    
+                </Alert>  
                 </div>
                 {searchResultUsers.map((p)=>(
                   <div>

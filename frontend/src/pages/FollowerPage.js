@@ -18,6 +18,7 @@ function NotificationPage() {
   const dispatch = useDispatch();
   const followerList = useSelector((state) => state.followerList);
   const { error, response } = followerList;
+  console.log(followerList);
 
   useEffect(() => {
     dispatch(getFollowerList());

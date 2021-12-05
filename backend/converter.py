@@ -32,7 +32,7 @@ def sanitize_author_dict(author: dict):
         if 'github' in author:
             converted_author['github_url'] = author['github']
     except Exception as e:
-        print("sanitize author exception : {}\n\n{}".format(type(e), str(e)))
+        print("sanitize author exception : {}\n\n{}\n".format(type(e), str(e)))
         print(traceback.format_exc())
         return None
     return converted_author
@@ -54,6 +54,8 @@ def sanitize_post_dict(post: dict, node: str = None):
         author, created = Author.objects.get_or_create(id=author_dict['id'], defaults=author_dict)
         # These are required fields
         # Remove the trailing /
+        if 'postID' in post:
+            post['id'] = '/' + post['postID']
         if post['id'].endswith('/'):
             post['id'] = post['id'][:-1]
         converted_post = {
@@ -75,7 +77,7 @@ def sanitize_post_dict(post: dict, node: str = None):
         # These are optional fields
         if 'categories' in post:
             converted_post['categories'] = post['categories']
-        if 'origin' in post:
+        if 'origin' in post and post['origin'] != None:
             converted_post['origin'] = post['origin'].split('posts/')[0]
         else:
             converted_post['origin'] = node
@@ -86,7 +88,8 @@ def sanitize_post_dict(post: dict, node: str = None):
         if 'title' in post:
             converted_post['title'] = post['title']
     except Exception as e:
-        print("sanitize post exception : {}\n\n{}".format(type(e), str(e)))
+        print("sanitize post exception : {}\n\n{}\n".format(type(e), str(e)))
+        print(traceback.format_exc())
         return None
     return converted_post
 
@@ -95,6 +98,8 @@ def sanitize_comment_dict(comment: dict, post_obj: Post, node: str = None):
     try:
         author_dict = sanitize_author_dict(comment['author'])
         author, created = Author.objects.get_or_create(id=author_dict['id'], defaults=author_dict)
+        if 'content' in comment:
+            comment['comment'] = comment['content']
         converted_comment = {
             'author': author,
             'comment': comment['comment'],
@@ -107,6 +112,9 @@ def sanitize_comment_dict(comment: dict, post_obj: Post, node: str = None):
         if 'published' in comment:
             converted_comment['published'] = comment['published']
         # If the if the id is there then we assume that we are importing a comment
+        if 'commentID' in comment:
+            comment['id'] = '/' + comment['commentID']
+        
         if 'id' in comment:
             if comment['id'].endswith('/'):
                 comment['id'] = comment['id'][:-1]
@@ -114,7 +122,8 @@ def sanitize_comment_dict(comment: dict, post_obj: Post, node: str = None):
         # If the id is missing then it's assume that we are generating one from scratch on creation
     
     except Exception as e:
-        print("sanitize comment exception : {}\n\n{}".format(type(e), str(e)))
+        print("sanitize comment exception : {}\n\n{}\n".format(type(e), str(e)))
+        print(traceback.format_exc())
         return None
     return converted_comment
 
@@ -129,7 +138,8 @@ def sanitize_like_dict(like: dict, node: str = None):
             'author': author,
         }
     except Exception as e:
-        print("sanitize like exception : {}\n\n{}".format(type(e), str(e)))
+        print("sanitize like exception : {}\n\n{}\n".format(type(e), str(e)))
+        print(traceback.format_exc())
         return None
     return converted_like
 
@@ -146,6 +156,7 @@ def sanitize_friend_request_dict(friend_request: dict, node: str = None):
             'object': object
         }
     except Exception as e:
-        print("sanitize friend request exception : {}\n\n{}".format(type(e), str(e)))
+        print("sanitize friend request exception : {}\n\n{}\n".format(type(e), str(e)))
+        print(traceback.format_exc())
         return None
     return converted_friend_request

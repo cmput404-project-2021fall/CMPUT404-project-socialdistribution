@@ -28,6 +28,12 @@ import {
   FOLLOWER_LIST_REQUEST,
   FOLLOWER_LIST_SUCCESS,
   FOLLOWER_LIST_FAIL,
+  USER_LIST_FAIL,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  GITHUB_EVENT_FAIL,
+  GITHUB_EVENT_REQUEST,
+  GITHUB_EVENT_SUCCESS,
 } from "../constants/userConstants";
 
 export const userRegisterReducer = (state = {}, action) => {
@@ -176,6 +182,38 @@ export const followerListReducer = (state = {}, action) => {
       return { loading: false, response: action.payload };
 
     case FOLLOWER_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const userListReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_LIST_REQUEST:
+      return { loading: true };
+
+    case USER_LIST_SUCCESS:
+      return { loading: false, response: action.payload };
+
+    case USER_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const githubEventReducer = (state = {}, action) => {
+  switch (action.type) {
+    case GITHUB_EVENT_REQUEST:
+      return { loading: true };
+
+    case GITHUB_EVENT_SUCCESS:
+      return { loading: false, response: action.payload };
+
+    case GITHUB_EVENT_FAIL:
       return { loading: false, error: action.payload };
 
     default:

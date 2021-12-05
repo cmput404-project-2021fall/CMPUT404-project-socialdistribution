@@ -32,6 +32,9 @@ import {
   FOLLOWER_LIST_REQUEST,
   FOLLOWER_LIST_SUCCESS,
   FOLLOWER_LIST_FAIL,
+  GITHUB_EVENT_REQUEST,
+  GITHUB_EVENT_SUCCESS,
+  GITHUB_EVENT_FAIL,
 } from "../constants/userConstants";
 
 export const register =
@@ -262,14 +265,18 @@ export const getUsers = () => async (dispatch, getState) => {
       type: USER_LIST_REQUEST,
     });
 
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
     const config = {
       headers: {
         "Content-type": "application/json",
+        Authorization: `Token ${userInfo.token}`,
       },
     };
 
     const { data } = await axios.get(`/api/authors/`, config);
-
     dispatch({
       type: USER_LIST_SUCCESS,
       payload: data,
@@ -436,6 +443,40 @@ export const getFollowerList = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: FOLLOWER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const getGithubEvent = (github_id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: GITHUB_EVENT_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        "Accept": "application/vnd.github.v3+json",
+      },
+    };
+    
+    const { data } = await axios.get(`https://api.github.com/users/${github_id}/events`, config);
+    dispatch({
+      type: GITHUB_EVENT_SUCCESS,
+      payload: data,
+    });
+
+  } catch (error) {
+    dispatch({
+      type: GITHUB_EVENT_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
