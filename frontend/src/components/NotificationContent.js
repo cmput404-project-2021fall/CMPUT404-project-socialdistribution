@@ -55,14 +55,7 @@ function NotificationContent(prop) {
           )}
           {prop.notification.type == "Follow" ? (
             <Button className="m-1" variant="success">
-              Accept
-            </Button>
-          ) : (
-            ""
-          )}
-          {prop.notification.type == "Follow" ? (
-            <Button className="m-1" variant="danger">
-              Decline
+              Follow Back To Be Friends
             </Button>
           ) : (
             ""

@@ -19,6 +19,9 @@ function HomeContent() {
   const { userInfo } = userLogin;
 
   const userDetail = useSelector((state) => state.userDetail);
+  const { userInfo: userDetailInfo } = userDetail;
+
+  console.log(userDetailInfo);
 
   // debug why only
   useEffect(() => {
