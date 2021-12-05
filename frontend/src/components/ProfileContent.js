@@ -11,6 +11,7 @@ import {
   checkFollowingStatus,
   followingUserCheck,
   sendFriendRequest,
+  unfollowUser,
 } from "../actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import jQuery from "jquery";
@@ -34,6 +35,9 @@ function ProfileContent(props) {
 
   const friendRequest = useSelector((state) => state.friendRequest);
   const { error: FRerror, response: FRresponse } = friendRequest;
+
+  const unfollow = useSelector((state) => state.unfollow);
+  const { error: unfollowError, response: unfollowResponse } = unfollow;
 
   const view_user_id =
     myInfo.author_id != props.view_user_id ? props.view_user_id : null;
@@ -70,9 +74,12 @@ function ProfileContent(props) {
   }
 
   const friendRequestHandler = () => {
-    console.log(myInfo.author);
-    console.log(userInfo);
     dispatch(sendFriendRequest(view_user_id, myInfo.author, userInfo));
+  };
+
+  const unfollowHandler = () => {
+    dispatch(unfollowUser(view_user_id));
+    window.location.reload();
   };
 
   return (
@@ -134,21 +141,12 @@ function ProfileContent(props) {
                 Add Friend
               </Button>
             ) : meFollowThem ? (
-              <Button className="m-2" variant="danger">
+              <Button
+                className="m-2"
+                variant="danger"
+                onClick={() => unfollowHandler()}
+              >
                 Unfollow
-              </Button>
-            ) : theyFollowMe &&
-              !meFollowThem /* Need to add a checker if there is friend request */ ? (
-              <Button className="m-2" variant="success">
-                Accept Friend Request
-              </Button>
-            ) : (
-              ""
-            )}
-            {/* Need to add a checker if there is friend request */}
-            {theyFollowMe && !meFollowThem ? (
-              <Button className="m-2" variant="danger">
-                Decline Friend Request
               </Button>
             ) : (
               ""

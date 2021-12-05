@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password
 from http import HTTPStatus
 from backend.serializers import AuthorSerializer, CommentSerializer, PostSerializer, LikeSerializer
 
-from backend.models import Author, Post, Like, Comment, Inbox, FriendRequest
+from backend.models import Author, Post, Like, Comment, Inbox, FriendRequest, Node
 import requests
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
@@ -171,15 +171,15 @@ class PostViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             title="Test Title",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             description = "Test Post",
             content_type = "text/plain",
             published="2015-03-09T13:07:04+00:00",
@@ -198,12 +198,12 @@ class PostViewTest(TestCase):
         res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/posts/2f91a911-850f-4655-ac29-9115822c72a9",**header)
         #https://stackoverflow.com/questions/16877422/whats-the-best-way-to-parse-a-json-response-from-the-requests-library
         res_content = json.loads(res.content)
-        self.assertEqual(res_content["id"], "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9")
+        self.assertEqual(res_content["id"], "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9")
     def test_post_post(self):
         post_data = {
             "title":'New Title',
-            "source":"https://www.geeksforgeeks.org/python-unittest-assertnotequal-function/",
-            "origin":"https://www.geeksforgeeks.org/python-unittest-assertnotequal-function/",
+            "source":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "origin":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/posts/2f91a911-850f-4655-ac29-9115822c72a9",
             "description":"yee",
             "content_type":"text/plain",
             "published":"2015-03-09T13:07:04+00:00",
@@ -223,8 +223,8 @@ class PostViewTest(TestCase):
 
         put_data = {
             "title":"Brand New Title",
-            "source" : "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            "origin" : "https://www.django-rest-framework.org/api-guide/views/",
+            "source" : "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b7/posts/2f91a911-850f-4655-ac29-9115822c72d9",
+            "origin" : "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b7/posts/2f91a911-850f-4655-ac29-9115822c72d9",
             "description" : "Test Post",
             "content_type" : "text/plain",
             "content" : "test text",
@@ -276,16 +276,16 @@ class PostListViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
                 github_url="https://github.com/abramhindle/CMPUT404-project-socialdistribution/blob/master/project.org",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             title="Test Title",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             description = "Test Post",
             content_type = "text/plain",
             published="2015-03-09T13:07:04+00:00",
@@ -294,10 +294,10 @@ class PostListViewTest(TestCase):
         )
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a1",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a1",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a1",
             title="Test Title2",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a1",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a1",
             description = "Test Post2",
             content_type = "text/plain",
             published="2015-03-09T13:07:04+00:00",
@@ -306,10 +306,10 @@ class PostListViewTest(TestCase):
         )
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72b1",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/post/2f91a911-850f-4655-ac29-9115822c72b1",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/post/2f91a911-850f-4655-ac29-9115822c72b1",
             title="Test Title2",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/post/2f91a911-850f-4655-ac29-9115822c72b1",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/post/2f91a911-850f-4655-ac29-9115822c72b1",
             description = "Test Post3",
             content_type = "text/plain",
             published="2015-03-09T13:07:04+00:00",
@@ -331,8 +331,8 @@ class PostListViewTest(TestCase):
         author_dict = author_serializer.data
         post_data = {
             "title":'New Title',
-            "source":"https://www.geeksforgeeks.org/python-unittest-assertnotequal-function/",
-            "origin":"https://www.geeksforgeeks.org/python-unittest-assertnotequal-function/",
+            "source":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b7/posts/2f91a911-850f-4655-ac29-9115822c72b1",
+            "origin":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b7/posts/2f91a911-850f-4655-ac29-9115822c72b1",
             "description":"yee",
             "contentType":"text/plain",
             "published":"2015-03-09T13:07:04+00:00",
@@ -372,15 +372,15 @@ class CommentViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9",
             title="Test Title",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
@@ -388,14 +388,14 @@ class CommentViewTest(TestCase):
         )
         Comment.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a7",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
             post = post,
             author = authors[1],
             comment = "This is a test comment",
         )
         Comment.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72b7",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72b7",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72a8/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72b7",
             post = post,
             author = authors[1],
             comment = "This is a test comment2",
@@ -441,8 +441,8 @@ class FollowersListViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
                 ))
         #https://stackoverflow.com/questions/17826629/how-to-set-value-of-a-manytomany-field-in-django
         authors[0].followers.add(Author.objects.get(id = "2f91a911-850f-4655-ac29-9115822c72a6"))
@@ -479,8 +479,8 @@ class FollowersViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
                 ))
         #https://stackoverflow.com/questions/17826629/how-to-set-value-of-a-manytomany-field-in-django
         authors[0].followers.add(Author.objects.get(id = "2f91a911-850f-4655-ac29-9115822c72a6"))
@@ -538,8 +538,8 @@ class FriendsViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
                 ))
         #https://stackoverflow.com/questions/17826629/how-to-set-value-of-a-manytomany-field-in-django
         authors[0].followers.add(Author.objects.get(id = "2f91a911-850f-4655-ac29-9115822c72a6"))
@@ -567,7 +567,7 @@ class FriendsViewTest(TestCase):
     def test_valid_friend(self):
         res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72a8/friends/2f91a911-850f-4655-ac29-9115822c72a6",**header)
         body = json.loads(res.content.decode("utf-8"))
-        self.assertEqual(body["id"], "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72a6")
+        self.assertEqual(body["id"], "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72a6")
 
 class LikedViewTest(TestCase):
     @classmethod
@@ -590,34 +590,34 @@ class LikedViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             title="Test Title",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
             author = authors[0],
         )
         post_like = Like.objects.create(
-            object="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            object="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             author = authors[1],
             summary = "liking author likes post",
         )
         comment= Comment.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a7",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
             post = post,
             author = authors[2],
             comment = "This is a test comment",
         )
         comment_like = Like.objects.create(
-            object="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
+            object="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
             author = authors[1],
             summary = "liking author likes post",
         )
@@ -653,34 +653,34 @@ class LikesViewTest(TestCase):
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url="https://cmput-404-social-distribution.herokuapp.com/{}".format(uuid_list[author_id]),
+                host="https://cmput-404-social-distribution.herokuapp.com/",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             title="Test Title",
-            source = "https://www.youtube.com/watch?v=YIJI5U0BWr0",
-            origin = "https://www.django-rest-framework.org/api-guide/views/",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
             author = authors[0],
         )
         post_like = Like.objects.create(
-            object="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            object="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             author = authors[1],
             summary = "liking author likes post",
         )
         comment= Comment.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72a7",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
             post = post,
             author = authors[2],
             comment = "This is a test comment",
         )
         comment_like = Like.objects.create(
-            object="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
+            object="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
             author = authors[1],
             summary = "liking author likes post",
         )
@@ -714,7 +714,7 @@ class LikesViewTest(TestCase):
         post_data = {
             "summary": "Lara Croft Likes your post",
             "type": "Like",
-            "object":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
+            "object":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9",
             "author" : author_dict,
         }
         post_res = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data,follow=True,content_type="application/json",**header)
@@ -735,7 +735,7 @@ class LikesViewTest(TestCase):
         post_data = {
             "summary": "Lara Croft Likes your post",
             "type": "Like",
-            "object":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
+            "object":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b5/post/2f91a911-850f-4655-ac29-9115822c72a9/comment/2f91a911-850f-4655-ac29-9115822c72a7",
             "author" : author_dict,
         }
         post_res = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data,follow=True,content_type="application/json",**header)
@@ -766,20 +766,26 @@ class InboxViewTest(TestCase):
         ])
         authors = []
         for author_id in range(number_of_authors):
+                if (author_id == "2f91a911-850f-4655-ac29-9115822c72b9"):
+                    myUrl="https://cmput-404-social-distribution.herokuapp2.com/author/{}".format(uuid_list[author_id])
+                    myHost="https://cmput-404-social-distribution.herokuapp2.com/"
+                else:
+                    myUrl="https://cmput-404-social-distribution.herokuapp.com/author/{}".format(uuid_list[author_id])
+                    myHost="https://cmput-404-social-distribution.herokuapp.com/"
                 authors.append(Author.objects.create(
                 id=uuid_list[author_id],
                 user=User.objects.get(username="LoginViewTest{}".format(author_id)),
                 display_name="Test unit{}".format(author_id),
-                url="http://127.0.0.1:8000/author/{}".format(uuid_list[author_id]),
-                host="http://127.0.0.1:8000/",
+                url=myUrl,
+                host=myHost,
                 type = "author",
             ))
         post = Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72c9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
             title="Test Title",
-            source = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
-            origin = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
@@ -788,10 +794,10 @@ class InboxViewTest(TestCase):
 
         Post.objects.create(
             id="2f91a911-850f-4655-ac29-9115822c72f9",
-            url="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            url="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
             title="Test Title",
-            source = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
-            origin = "http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            source = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            origin = "https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
             description = "Test Post",
             content_type = "text/plain",
             content = "test text",
@@ -799,7 +805,7 @@ class InboxViewTest(TestCase):
         )
 
         post_like = Like.objects.create(
-            object="http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
+            object="https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72f9",
             author = authors[2],
             summary = "liking author likes post",
         )
@@ -815,6 +821,12 @@ class InboxViewTest(TestCase):
         inbox.posts.add(post)
         inbox.likes.add(post_like)
         inbox.friend_requests.add(friend_request)
+
+        node = Node.objects.create(
+            host = "https://cmput-404-social-distribution.herokuapp2.com/",
+            auth_info = "username:password",
+            connect = False
+        )
     def test_inbox_get(self):
         #test the external inbox API
         get_res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",follow=True,content_type="application/json",**header)
@@ -871,12 +883,12 @@ class InboxViewTest(TestCase):
 
         post_data = {
             "type":"post",
-            "id":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
-            "url":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "id":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "url":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
             "title":"Test Title",
-            "host":"http://127.0.0.1:8000/",
-            "source":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
-            "origin":"http://127.0.0.1:8000/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "host":"https://cmput-404-social-distribution.herokuapp.com/",
+            "source":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "origin":"https://cmput-404-social-distribution.herokuapp.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
             "description":"Test Post",
             "contentType":"text/plain",
             "content":"test text",
@@ -906,6 +918,78 @@ class InboxViewTest(TestCase):
 
         get_post_res = self.client.get("/api/author/2f91a911-850f-4655-ac29-9115822c72b9/posts/2f91a911-850f-4655-ac29-9115822c72c9",**header)
         self.assertEqual(get_post_res.status_code,200)
+
+    def test_inbox_post_post_with_foreign_node(self):
+        author0=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b5")
+        author1=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b6")
+        author_serializer1 = AuthorSerializer(author1)
+        author_dict1 = author_serializer1.data
+
+        inbox = Inbox.objects.get(id=author0)
+
+        post_data = {
+            "type":"post",
+            "id":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "url":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "title":"Test Title",
+            "host":"https://cmput-404-social-distribution.herokuapp2.com/",
+            "source":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "origin":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "description":"Test Post",
+            "contentType":"text/plain",
+            "content":"test text",
+            "published":"2021-10-28T22:05:19.375995Z",
+            "visibility": "PUBLIC",
+            "unlisted": False,
+            "author": author_dict1,
+            "comments":"",
+        }
+        header2 = {'HTTP_AUTHORIZATION': "Basic dXNlcm5hbWU6cGFzc3dvcmQ="}
+        self.assertEqual(0,len(author1.posted.all()))
+        self.assertEqual(1,len(inbox.posts.all()))
+        print(self.client)
+        self.client.force_login(User.objects.get_or_create(username='LoginViewTest3')[0])
+        print(self.client)
+        post_res = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data,follow=True,content_type="application/json",**header2)
+        self.assertEqual(post_res.status_code,200)
+        self.assertEqual(2,len(inbox.posts.all()))
+        self.assertEqual(1,len(author1.posted.all()))
+
+    def test_inbox_post_post_with_foreign_node_wrong_auth(self):
+        author0=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b5")
+        author1=Author.objects.get(id="2f91a911-850f-4655-ac29-9115822c72b6")
+        author_serializer1 = AuthorSerializer(author1)
+        author_dict1 = author_serializer1.data
+
+        inbox = Inbox.objects.get(id=author0)
+
+        post_data = {
+            "type":"post",
+            "id":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "url":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "title":"Test Title",
+            "host":"https://cmput-404-social-distribution.herokuapp2.com/",
+            "source":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "origin":"https://cmput-404-social-distribution.herokuapp2.com/author/2f91a911-850f-4655-ac29-9115822c72b6/posts/2f91a911-850f-4655-ac29-9115822c72a9",
+            "description":"Test Post",
+            "contentType":"text/plain",
+            "content":"test text",
+            "published":"2021-10-28T22:05:19.375995Z",
+            "visibility": "PUBLIC",
+            "unlisted": False,
+            "author": author_dict1,
+            "comments":"",
+        }
+        header2 = {'HTTP_AUTHORIZATION': "Basic dXNlcm5hboU6cGFzc3dvcmQ="}
+        self.assertEqual(0,len(author1.posted.all()))
+        self.assertEqual(1,len(inbox.posts.all()))
+        print(self.client)
+        self.client.force_login(User.objects.get_or_create(username='LoginViewTest3')[0])
+        print(self.client)
+        post_res = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data,follow=True,content_type="application/json",**header2)
+        self.assertEqual(post_res.status_code,403)
+        self.assertEqual(1,len(inbox.posts.all()))
+        self.assertEqual(0,len(author1.posted.all()))
 
 
         

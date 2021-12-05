@@ -27,7 +27,9 @@ from .models import Author, FriendRequest, Post, Comment, Like, Inbox
 from .forms import SignUpForm
 from .permission import IsAuthenticated, IsAuthorOrReadOnly, IsLocalAuthor
 from .converter import *
-from .node_connections import send_post_to_foreign_authors, send_to_friends, async_update_db
+from .node_connections import send_post_to_foreign_authors, send_to_friends, async_update_db, send_friend_request, send_like
+
+from social_dist.settings import DJANGO_DEFAULT_HOST
 
 # Helper function on getting an author based on author_id
 
@@ -429,6 +431,7 @@ class PostDetail(APIView):
                 posts_list = list(Post.objects.filter(visibility='PUBLIC', unlisted=False).order_by('-published'))
             post_serializer = PostSerializer(posts_list, many=True)
             post_dict = {
+                "type":"posts",
                 "items": post_serializer.data
             }
             return Response(post_dict)
@@ -471,6 +474,7 @@ class PostDetail(APIView):
 
         post_serializer = PostSerializer(posts, many=True)
         post_dict = {
+            "type": "posts",  
             "items": post_serializer.data
         }
         return Response(post_dict)
@@ -893,6 +897,9 @@ class InboxDetail(APIView):
             )
 
             if friend_request_created:
+                #send to the foreign author if need be
+                if DJANGO_DEFAULT_HOST.split('//')[1].split('/api/')[0] not in author.url:
+                    send_friend_request(author,request_dict)
                 inbox.friend_requests.add(friend_request)
                 friend_request.actor.followers.add(author)
                 existing_friend_request = get_friend_request(author,friend_request.actor)
@@ -912,6 +919,8 @@ class InboxDetail(APIView):
                 )
                 # If a like object is already created then add it to the inbox
                 if created:
+                    if DJANGO_DEFAULT_HOST.split('//')[1].split('/api/')[0] not in author.url:
+                        send_like(author,request_dict)
                     inbox.likes.add(like)
                     return Response(data={'detail':"Successfully liked object {} and send to recipient's inbox".format(request_dict['object'])}, status=200)
                 # If the like object already exist then it was already sent to the inbox

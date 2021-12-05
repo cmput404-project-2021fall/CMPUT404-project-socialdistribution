@@ -163,3 +163,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 
 django_on_heroku.settings(locals())
+DATABASES['default']['CONN_MAX_AGE'] = 0
