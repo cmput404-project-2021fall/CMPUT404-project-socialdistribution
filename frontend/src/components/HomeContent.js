@@ -19,26 +19,19 @@ function HomeContent() {
   const { userInfo } = userLogin;
 
   const userDetail = useSelector((state) => state.userDetail);
-  
-  // debug why only 
+  const { userInfo: userDetailInfo } = userDetail;
+
   useEffect(() => {
     dispatch(getAuthorDetail());
-  },[]);
+  }, []);
 
-  const github_url = userDetail ? userDetail.userInfo:"";
-  const github_id = github_url && github_url.github ? github_url.github.match('[^/]+(?!.*/)')[0]:"";
-  
   const postList = useSelector((state) => state.postList);
   const { error, success, post } = postList;
 
   useEffect(() => {
-    if (response == null) {
-      dispatch(getLikedPosts());
-    }
-    if (post == null) {
-      dispatch(getPosts());
-    }
-  }, [dispatch, response, post]);
+    dispatch(getLikedPosts());
+    dispatch(getPosts());
+  }, []);
 
   const [message, setMessage] = useState("");
   const likedPosts = response ? response.items : [];
@@ -61,22 +54,28 @@ function HomeContent() {
     }
   };
 
+  const github_url = userDetailInfo ? userDetailInfo : "";
+  
+  const github_id =
+    github_url && github_url.github
+      ? github_url.github.match("[^/]+(?!.*/)")[0]
+      : "";
+      
   // add github event to stream
   const githubData = useSelector((state) => state.githubEvent);
   useEffect(() => {
-    if(github_id){
+    if (github_id) {
       dispatch(getGithubEvent(github_id));
     }
-  }, []);
+  }, [github_id]);
 
-  const githubEvent = githubData.loading == false ?
-        githubData.response : [];
+  const githubEvent = githubData.loading == false ? githubData.response : [];
 
   var githubActivities = [];
-  var githubAvatarUrl = ""; 
+  var githubAvatarUrl = "";
 
-  if(githubEvent){
-    for(var i=0;i<githubEvent.length;i++){
+  if (githubEvent) {
+    for (var i = 0; i < githubEvent.length; i++) {
       var githubActivity = {
         "user_name": githubEvent[i].actor.display_login,
         "type": githubEvent[i].type == "PushEvent" ? "push to"
@@ -84,13 +83,12 @@ function HomeContent() {
             : githubEvent[i].type == "CreateEvent" ? "create"
             : githubEvent[i].type == "WatchEvent" ? "watch"
             : "",
-        "repo_name": githubEvent[i].repo.name,
-        "time": githubEvent[i].created_at,
+        repo_name: githubEvent[i].repo.name,
+        time: githubEvent[i].created_at,
       };
       githubActivities.push(githubActivity);
       githubAvatarUrl = githubEvent[0].actor.avatar_url;
     }
-    
   }
 
   return (
@@ -127,53 +125,51 @@ function HomeContent() {
         <Nav.Item>
           {userInfo ? (
             <Nav.Link eventKey="4" onClick={() => setTab(4)}>
-              My Stream
+              GitHub Activity
             </Nav.Link>
           ) : (
             <Nav.Link eventKey="4" disabled>
-              My Stream
+              GitHub Activity
             </Nav.Link>
           )}
         </Nav.Item>
-        
       </Nav>
-      {tab === 1
-        ? likedPosts &&
-          posts.map((p) =>
-            userInfo != null ? (
-              <Posts post={p} liked={likedPosts} />
-            ) : p.visibility == "PUBLIC" ? (
-              <Posts post={p} liked={likedPosts} />
-            ) : (
-              ""
-            )
+      {tab === 1 ? (
+        likedPosts &&
+        posts.map((p) =>
+          userInfo != null ? (
+            <Posts post={p} liked={likedPosts} />
+          ) : p.visibility == "PUBLIC" ? (
+            <Posts post={p} liked={likedPosts} />
+          ) : (
+            ""
           )
-        : tab === 2
-        ? likedPosts &&
-          posts.map((p) =>
-            p.visibility == "FRIENDS" && !isMyPost(p) ? (
-              <Posts post={p} liked={likedPosts} />
-            ) : (
-              ""
-            )
+        )
+      ) : tab === 2 ? (
+        likedPosts &&
+        posts.map((p) =>
+          p.visibility == "FRIENDS" && !isMyPost(p) ? (
+            <Posts post={p} liked={likedPosts} />
+          ) : (
+            ""
           )
-        : tab === 3
-        ? likedPosts &&
-          posts.map((p) =>
-            isMyPost(p) ? <Posts post={p} liked={likedPosts} /> : ""
-          )
-        : githubActivities.length == 0 
-        ? (
+        )
+      ) : tab === 3 ? (
+        likedPosts &&
+        posts.map((p) =>
+          isMyPost(p) ? <Posts post={p} liked={likedPosts} /> : ""
+        )
+      ) : githubActivities.length == 0 ? (
+        <Card className="m-5">
+          <Card.Body>
+            <Card.Title className="m-3 text-center">
+              No activity available.
+            </Card.Title>
+          </Card.Body>
+        </Card>
+      ) : (
+        githubActivities.map((p) => (
           <Card className="m-5">
-            <Card.Body>
-              <Card.Title className="m-3 text-center">
-                No activity available.
-              </Card.Title>
-            </Card.Body>
-            </Card>)
-        :(
-          githubActivities.map((p) =>
-            <Card className="m-5">
             <Card.Body>
               <div className="d-flex">
                 <Card.Img
@@ -181,18 +177,19 @@ function HomeContent() {
                   src={githubAvatarUrl}
                   style={{ width: "6rem", height: "6rem" }}
                 />
-                  <Nav.Link className="m-2 justify-content-center">
-                    {p.user_name}
-                  </Nav.Link>
+                <Nav.Link className="m-2 justify-content-center">
+                  {p.user_name}
+                </Nav.Link>
               </div>
               <Card.Title className="m-3 text-center">
-                <u>{p.type} {p.repo_name} <br /> at {p.time}</u>
+                <u>
+                  {p.type} {p.repo_name} <br /> at {p.time}
+                </u>
               </Card.Title>
             </Card.Body>
-            </Card>
-          )
-        )}
-        
+          </Card>
+        ))
+      )}
     </div>
   );
 }
