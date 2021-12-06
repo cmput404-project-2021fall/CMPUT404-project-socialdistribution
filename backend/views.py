@@ -906,7 +906,6 @@ class InboxDetail(APIView):
                 if DJANGO_DEFAULT_HOST.split('//')[1].split('/api/')[0] not in author.url:
                     send_friend_request(author,request_dict)
                 inbox.friend_requests.add(friend_request)
-                author.followers.add(friend_request.actor)
                 return Response(data={'detail':"Successfully created Friend Request from {} to {} and send to recipient's inbox".format(friend_request.actor.id, author_id)}, status=200)            
             return Response(data={'detail':"Friend Request from {} to {} already been sent".format(friend_request.actor.id, author_id)}, status=200)   
 
