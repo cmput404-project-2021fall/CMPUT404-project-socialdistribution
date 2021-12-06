@@ -42,7 +42,7 @@ Front - Back end
 - :black_square_button: - :white_check_mark: As an author I want to edit public posts.
 - :white_check_mark: - :white_check_mark: As an author, posts I create can link to images. (via commonmark)
 - :white_check_mark: - :white_check_mark: As an author, posts I create can be images.
-- :black_square_button: - :black_square_button: As a server admin, images can be hosted on my server.
+- :white_check_mark: - :white_check_mark: As a server admin, images can be hosted on my server.
 - :white_check_mark: - :white_check_mark: As an author, posts I create can be private to another author
 - :white_check_mark: - :white_check_mark: As an author, posts I create can be private to my friends
 - :black_square_button: - :black_square_button: As an author, I can share other author's public posts
@@ -55,12 +55,12 @@ Front - Back end
 - :white_check_mark: - :white_check_mark: As an author, I want to pull in my github activity to my "stream"
 - :white_check_mark: - :white_check_mark: As an author, I want to post posts to my "stream"
 - :white_check_mark: - :white_check_mark: As an author, I want to delete my own public posts.
-- :black_square_button: - :white_check_mark: As an author, I want to befriend local authors
-- :black_square_button: - :white_check_mark: As an author, I want to befriend remote authors
+- :white_check_mark: - :white_check_mark: As an author, I want to befriend local authors
+- :white_check_mark: - :white_check_mark: As an author, I want to befriend remote authors
 - :white_check_mark: - :white_check_mark: As an author, I want to feel safe about sharing images and posts with my friends -- images shared to friends should only be visible to friends. [public images are public]
 - :white_check_mark: - :white_check_mark: As an author, when someone sends me a friends only-post I want to see the likes.
 - :white_check_mark: - :white_check_mark: As an author, comments on friend posts are private only to me the original author.
-- :black_square_button: - :black_square_button: As an author, I want un-befriend local and remote authors
+- :white_check_mark: - :white_check_mark: As an author, I want un-befriend local and remote authors
 - :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage my profile
 - :white_check_mark: - :white_check_mark: As an author, I want to be able to use my web-browser to manage/author my posts
 - :white_check_mark: - :white_check_mark: As a server admin, I want to be able add, modify, and remove authors.
