@@ -40,7 +40,7 @@ const SearchResultPage = (props) => {
     }
   }else{
     for( var i=0;i<posts.length;i++){ 
-      if ( (posts[i].title.indexOf(searchText) != -1) || (posts[i].content.indexOf(searchText) != -1)) {
+      if ( (posts[i].title&&posts[i].title.indexOf(searchText) != -1) || (posts[i].content&&posts[i].content.indexOf(searchText) != -1)) {
         searchResultPosts.push(posts[i]);
       }
     }
