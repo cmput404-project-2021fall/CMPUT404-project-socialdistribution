@@ -901,14 +901,7 @@ class InboxDetail(APIView):
                     send_friend_request(author,request_dict)
                 inbox.friend_requests.add(friend_request)
                 author.followers.add(friend_request.actor)
-                existing_friend_request = get_friend_request(author,friend_request.actor)
-                if (existing_friend_request != None):
-                    existing_friend_request.delete()
-                if (author in friend_request.actor.followers.all()):
-                    friend_request.delete()
-                    return Response(data={'detail':"Friendship between {} to {} and established".format(friend_request.actor.id, author_id)}, status=200)
-                else:
-                    return Response(data={'detail':"Successfully created Friend Request from {} to {} and send to recipient's inbox".format(friend_request.actor.id, author_id)}, status=200)            
+                return Response(data={'detail':"Successfully created Friend Request from {} to {} and send to recipient's inbox".format(friend_request.actor.id, author_id)}, status=200)            
             return Response(data={'detail':"Friend Request from {} to {} already been sent".format(friend_request.actor.id, author_id)}, status=200)   
 
         elif request_dict['type'].lower() == 'like':
