@@ -27,7 +27,7 @@ function ProfilePage(props) {
     if (!userInfo) {
       history.push("/login");
     }
-  }, [history, userInfo]);
+  }, []);
 
   const view_user_id = props.match.params.id;
 
@@ -39,7 +39,7 @@ function ProfilePage(props) {
           <SideBar />
         </Col>
         <Col className="justify-content-center">
-          <ProfileContent view_user_id={view_user_id}/>
+          <ProfileContent view_user_id={view_user_id} />
         </Col>
       </Row>
     </Container>

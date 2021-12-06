@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useHistory } from "react-router";
 import {
   USER_REGISTER_FAIL,
   USER_REGISTER_SUCCESS,
@@ -38,6 +39,9 @@ import {
   UNFOLLOW_FAIL,
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
+  ACCEPT_FRIEND_FAIL,
+  ACCEPT_FRIEND_REQUEST,
+  ACCEPT_FRIEND_SUCCESS,
 } from "../constants/userConstants";
 
 export const register =
@@ -393,7 +397,7 @@ export const sendFriendRequest =
         `/api/author/${their_id}/inbox/`,
         {
           type: "Follow",
-          summary: `${userInfo.author.displayName} started following you, and wants to be your friend.`,
+          summary: `${userInfo.author.displayName} wants to follow you.`,
           actor: my_object,
           object: their_object,
         },
@@ -526,3 +530,43 @@ export const unfollowUser = (foreign_id) => async (dispatch, getState) => {
     });
   }
 };
+
+export const acceptFriendRequest =
+  (foreign_id) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ACCEPT_FRIEND_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Token ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios
+        .put(
+          `/api/author/${userInfo.author_id}/followers/${foreign_id}`,
+          config
+        )
+        .then(window.location.reload());
+
+      dispatch({
+        type: ACCEPT_FRIEND_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ACCEPT_FRIEND_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };

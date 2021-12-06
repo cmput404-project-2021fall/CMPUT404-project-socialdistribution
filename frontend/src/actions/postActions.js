@@ -136,15 +136,17 @@ export const postingComment =
         },
       };
 
-      const { data } = await axios.post(
-        `/api/author/${poster_id}/posts/${post_id}/comments`,
-        {
-          type: "comment",
-          author: userInfo.author,
-          comment: comment,
-        },
-        config
-      );
+      const { data } = await axios
+        .post(
+          `/api/author/${poster_id}/posts/${post_id}/comments`,
+          {
+            type: "comment",
+            author: userInfo.author,
+            comment: comment,
+          },
+          config
+        )
+        .then(() => dispatch(getPosts()));
 
       dispatch({
         type: POST_COMMENT_SUCCESS,
@@ -253,16 +255,18 @@ export const likePost = (post_url, poster_id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(
-      `/api/author/${poster_id}/inbox/`,
-      {
-        summary: `${userInfo.author.displayName} liked your post.`,
-        type: "Like",
-        author: userInfo.author,
-        object: post_url,
-      },
-      config
-    );
+    const { data } = await axios
+      .post(
+        `/api/author/${poster_id}/inbox/`,
+        {
+          summary: `${userInfo.author.displayName} liked your post.`,
+          type: "Like",
+          author: userInfo.author,
+          object: post_url,
+        },
+        config
+      )
+      .then(window.location.reload());
 
     dispatch({
       type: POST_LIKE_SUCCESS,

@@ -20,17 +20,17 @@ function HomeContent() {
   const userDetail = useSelector((state) => state.userDetail);
   const { userInfo: userDetailInfo } = userDetail;
 
-  useEffect(() => {
-    dispatch(getAuthorDetail());
-  }, []);
-
   const postList = useSelector((state) => state.postList);
   const { error, success, post } = postList;
 
   useEffect(() => {
     dispatch(getLikedPosts());
     dispatch(getPosts());
+<<<<<<< HEAD
     dispatch(updateDB());
+=======
+    dispatch(getAuthorDetail());
+>>>>>>> e3788fb461d50683352dc3e9dd66fbd237843254
   }, []);
 
   const [message, setMessage] = useState("");
@@ -55,12 +55,12 @@ function HomeContent() {
   };
 
   const github_url = userDetailInfo ? userDetailInfo : "";
-  
+
   const github_id =
     github_url && github_url.github
       ? github_url.github.match("[^/]+(?!.*/)")[0]
       : "";
-      
+
   // add github event to stream
   const githubData = useSelector((state) => state.githubEvent);
   useEffect(() => {
@@ -77,11 +77,16 @@ function HomeContent() {
   if (githubEvent) {
     for (var i = 0; i < githubEvent.length; i++) {
       var githubActivity = {
-        "user_name": githubEvent[i].actor.display_login,
-        "type": githubEvent[i].type == "PushEvent" ? "push to"
-            : githubEvent[i].type == "PullRequestEvent" ? "pull from"
-            : githubEvent[i].type == "CreateEvent" ? "create"
-            : githubEvent[i].type == "WatchEvent" ? "watch"
+        user_name: githubEvent[i].actor.display_login,
+        type:
+          githubEvent[i].type == "PushEvent"
+            ? "push to"
+            : githubEvent[i].type == "PullRequestEvent"
+            ? "pull from"
+            : githubEvent[i].type == "CreateEvent"
+            ? "create"
+            : githubEvent[i].type == "WatchEvent"
+            ? "watch"
             : "",
         repo_name: githubEvent[i].repo.name,
         time: githubEvent[i].created_at,

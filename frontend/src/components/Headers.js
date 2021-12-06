@@ -15,10 +15,11 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions/userActions";
 import searchicon from "../images/search.png";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { unstable_renderSubtreeIntoContainer } from "react-dom/cjs/react-dom.development";
 
 function Headers(props) {
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const [searchContent, setSearchContent] = useState(" ");
