@@ -50,8 +50,8 @@ def async_update_db(update_authors: bool, update_posts: bool, time_profile=True)
     """
     Async update the db while the user does stuff
     """
-    # threading.Thread(target=update_db, name="update_db", args=(update_authors, update_posts, time_profile)).start()
-    update_db(update_authors, update_posts, time_profile)
+    threading.Thread(target=update_db, name="update_db", args=(update_authors, update_posts, time_profile)).start()
+    # update_db(update_authors, update_posts, time_profile)
 
 
 def async_get(url: str, auth: tuple = None, headers:dict = None, params: dict = None, object_instance=None):
