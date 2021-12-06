@@ -871,12 +871,10 @@ class InboxViewTest(TestCase):
             "actor": author_dict1,
             
         }
-        self.assertEqual(0,len(author0.followers.all()))
         self.assertEqual(1,len(inbox.friend_requests.all()))
         post_res = self.client.post("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/inbox/",data=post_data,follow=True,content_type="application/json",**header)
         self.assertEqual(post_res.status_code,200)
         self.assertEqual(2,len(inbox.friend_requests.all()))
-        self.assertEqual(1,len(author0.followers.all()))
 
         #now test to see if a put follow that would render this friend request irrelevant removes it
         put_data = {
