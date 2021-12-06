@@ -813,7 +813,7 @@ class InboxDetail(APIView):
     """
     This class will implement all the inbox specific methods
     """
-    permission_classes = [IsAuthenticated|AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, author_id: str):
         """
