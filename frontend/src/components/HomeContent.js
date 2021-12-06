@@ -47,8 +47,8 @@ function HomeContent() {
   useEffect(() => {
     dispatch(getLikedPosts());
     dispatch(getPosts());
-    //dispatch(updateDB());
     dispatch(getAuthorDetail());
+    dispatch(updateDB());
   }, []);
 
   const github_url = userDetailInfo ? userDetailInfo : "";
