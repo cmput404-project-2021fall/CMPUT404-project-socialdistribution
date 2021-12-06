@@ -23,13 +23,6 @@ function HomeContent() {
   const postList = useSelector((state) => state.postList);
   const { error, success, post } = postList;
 
-  useEffect(() => {
-    dispatch(getLikedPosts());
-    dispatch(getPosts());
-    dispatch(updateDB());
-    dispatch(getAuthorDetail());
-  }, []);
-
   const [message, setMessage] = useState("");
   const likedPosts = response ? response.items : [];
   const posts = post ? post.items : [];
@@ -50,6 +43,13 @@ function HomeContent() {
       return false;
     }
   };
+
+  useEffect(() => {
+    dispatch(getLikedPosts());
+    dispatch(getPosts());
+    //dispatch(updateDB());
+    dispatch(getAuthorDetail());
+  }, []);
 
   const github_url = userDetailInfo ? userDetailInfo : "";
 

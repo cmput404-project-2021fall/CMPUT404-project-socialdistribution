@@ -21,6 +21,10 @@ import {
   postingComment,
   getPosts,
 } from "../actions/postActions";
+import {
+  checkFollowingStatus,
+  followingUserCheck,
+} from "../actions/userActions";
 import Message from "../components/Message";
 import { Callbacks } from "jquery";
 
@@ -40,6 +44,12 @@ function Posts(prop) {
   const [numLikes, setNumLikes] = useState(prop ? prop.post.numLikes : 0);
   const [commentContent, setCommentContent] = useState("");
   const [message, setMessage] = useState("");
+
+  const checkFollowing = useSelector((state) => state.checkFollowing);
+  const { error: error1, response: response1 } = checkFollowing;
+
+  const getUserFollower = useSelector((state) => state.getUserFollower);
+  const { error: error2, response: response2 } = getUserFollower;
 
   // did I like this post already?
   if (like == null) {
@@ -94,6 +104,33 @@ function Posts(prop) {
         : false
       : false;
 
+  useEffect(() => {
+    if (userInfo && !isMyPost) {
+      // check if I am following view_user
+      dispatch(checkFollowingStatus(post_author_id, userInfo.author_id));
+      // check if param following me
+      dispatch(followingUserCheck(post_author_id));
+    }
+  }, []);
+
+  const [meFollowThem, setMeFollowThem] = useState();
+  const [theyFollowMe, setTheyFollowMe] = useState();
+
+  if ((response1 || error1) && (response2 || error2) && meFollowThem == null) {
+    // do I follow them?
+    if (error1 == "Follower Author Not Found") {
+      setMeFollowThem(false);
+    } else {
+      setMeFollowThem(true);
+    }
+    // do they follow me?
+    if (error2 == "Follower Author Not Found") {
+      setTheyFollowMe(false);
+    } else {
+      setTheyFollowMe(true);
+    }
+  }
+
   const CommonMark = require("commonmark");
   const ReactRenderer = require("commonmark-react-renderer");
 
@@ -129,135 +166,145 @@ function Posts(prop) {
     }
   };
 
-  return (
-    <div className="m-5">
-      {error && <Message variant="danger">{error}</Message>}
-      {postLikeError && <Message variant="danger">{postLikeError}</Message>}
-      <Card>
-        <Card.Body>
-          <div className="d-flex">
-            <Card.Img
-              className="m-1"
-              src={Avatar}
-              style={{ width: "6rem", height: "6rem" }}
-            />
-            <LinkContainer
-              to={{
-                pathname: "/profile/" + post_author_id,
-                state: { user_id: user_id },
-              }}
-              style={{ fontSize: "1.5rem" }}
-            >
-              <Nav.Link className="m-2 justify-content-center">
-                {prop.post.author.displayName}
-              </Nav.Link>
-            </LinkContainer>
-            {isMyPost ? (
-              <DropdownButton
-                className="ms-auto mx-1"
-                id="bg-vertical-dropdown-1"
+  if (
+    (prop.post.visibility == "FRIENDS" && meFollowThem && theyFollowMe) ||
+    prop.post.visibility != "FRIENDS" ||
+    (userInfo && isMyPost)
+  ) {
+    return (
+      <div className="m-5">
+        {error && <Message variant="danger">{error}</Message>}
+        {postLikeError && <Message variant="danger">{postLikeError}</Message>}
+        <Card>
+          <Card.Body>
+            <div className="d-flex">
+              <Card.Img
+                className="m-1"
+                src={Avatar}
+                style={{ width: "6rem", height: "6rem" }}
+              />
+              <LinkContainer
+                to={{
+                  pathname: "/profile/" + post_author_id,
+                  state: { user_id: user_id },
+                }}
+                style={{ fontSize: "1.5rem" }}
               >
-                <Dropdown.Item eventKey="1">Edit</Dropdown.Item>
-                <Dropdown.Item eventKey="2" onClick={deleteHandler}>
-                  Delete
-                </Dropdown.Item>
-              </DropdownButton>
-            ) : prop.post.visibility == "PRIVATE" ? (
-              <Alert className="ms-auto mx-1 mb-5">Private Post</Alert>
+                <Nav.Link className="m-2 justify-content-center">
+                  {prop.post.author.displayName}
+                </Nav.Link>
+              </LinkContainer>
+              {isMyPost ? (
+                <DropdownButton
+                  className="ms-auto mx-1"
+                  id="bg-vertical-dropdown-1"
+                >
+                  <Dropdown.Item eventKey="1">Edit</Dropdown.Item>
+                  <Dropdown.Item eventKey="2" onClick={deleteHandler}>
+                    Delete
+                  </Dropdown.Item>
+                </DropdownButton>
+              ) : prop.post.visibility == "PRIVATE" ? (
+                <Alert className="ms-auto mx-1 mb-5">Private Post</Alert>
+              ) : (
+                ""
+              )}
+            </div>
+            <Card.Title className="m-3 text-center">
+              <u>{prop.post.title}</u>
+            </Card.Title>
+            {prop.post && prop.post.contentType != "text/image" ? (
+              <Card.Text className="mx-3 my-4" width="100%">
+                {content}
+              </Card.Text>
+            ) : (
+              <img
+                width="100%"
+                src={
+                  prop.post.content
+                    ? "data:image/png;base64" + prop.post.content
+                    : null
+                }
+              ></img>
+            )}
+
+            <Row className="justify-content-between m-1">
+              <Col className="d-flex align-items-center">
+                Likes: {numLikes}&nbsp;&nbsp;&nbsp; Comments:{" "}
+                {prop.post.commentsSrc.comments.length}
+              </Col>
+              <Col className="text-end">
+                <Button
+                  className={like || userInfo == null ? "m-1 disabled" : "m-1"}
+                  style={{ width: "7rem" }}
+                  variant="success"
+                  onClick={() => likeHandler()}
+                >
+                  {like ? "Liked" : "Like"}
+                </Button>
+                <Button
+                  className={
+                    (userInfo && prop.post.visibility == "PUBLIC") ||
+                    (userInfo && prop.post.author.id == userInfo.author.id) ||
+                    prop.post.visibility == "PRIVATE"
+                      ? "m-1"
+                      : "m-1 disabled"
+                  }
+                  style={{ width: "7rem" }}
+                  variant="info"
+                  onClick={() => commentHandler()}
+                >
+                  Comment
+                </Button>
+                <Button
+                  className="m-1"
+                  style={{ width: "7rem" }}
+                  variant="warning"
+                  onClick={sharePost}
+                >
+                  {share ? "Shared" : "Share"}
+                </Button>
+              </Col>
+            </Row>
+            {commentTab ? (
+              <div className="border rounded p-3">
+                <ListGroup className="m-1">
+                  {prop.post.commentsSrc.comments.map((comment) => (
+                    <ListGroup.Item>
+                      <div style={{ fontWeight: "bold", display: "inline" }}>
+                        {comment.author.displayName}:
+                      </div>
+                      {"   "}
+                      {comment.comment}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+                {message && <Message variant="danger">{message}</Message>}
+                <Form onSubmit={commentSubmitHandler}>
+                  <Form.Group className="my-2" controlId="content">
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      onChange={(e) => setCommentContent(e.target.value)}
+                    />
+                  </Form.Group>
+                  <div className="d-flex align-items-end justify-content-end px-5">
+                    <Button className="btn" type="submit" variant="primary">
+                      Submit
+                    </Button>
+                  </div>
+                </Form>
+              </div>
             ) : (
               ""
             )}
-          </div>
-          <Card.Title className="m-3 text-center">
-            <u>{prop.post.title}</u>
-          </Card.Title>
-          {prop.post && prop.post.contentType != "text/image" ? (
-            <Card.Text className="mx-3 my-4">{content}</Card.Text>
-          ) : (
-            <img
-              width="100%"
-              src={
-                prop.post.content
-                  ? "data:image/png;base64" + prop.post.content
-                  : null
-              }
-            ></img>
-          )}
-
-          <Row className="justify-content-between m-1">
-            <Col className="d-flex align-items-center">
-              Likes: {numLikes}&nbsp;&nbsp;&nbsp; Comments:{" "}
-              {prop.post.commentsSrc.comments.length}
-            </Col>
-            <Col className="text-end">
-              <Button
-                className={like || userInfo == null ? "m-1 disabled" : "m-1"}
-                style={{ width: "7rem" }}
-                variant="success"
-                onClick={() => likeHandler()}
-              >
-                {like ? "Liked" : "Like"}
-              </Button>
-              <Button
-                className={
-                  (userInfo && prop.post.visibility == "PUBLIC") ||
-                  (userInfo && prop.post.author.id == userInfo.author.id) ||
-                  prop.post.visibility == "PRIVATE"
-                    ? "m-1"
-                    : "m-1 disabled"
-                }
-                style={{ width: "7rem" }}
-                variant="info"
-                onClick={() => commentHandler()}
-              >
-                Comment
-              </Button>
-              <Button
-                className="m-1"
-                style={{ width: "7rem" }}
-                variant="warning"
-                onClick={sharePost}
-              >
-                {share ? "Shared" : "Share"}
-              </Button>
-            </Col>
-          </Row>
-          {commentTab ? (
-            <div className="border rounded p-3">
-              <ListGroup className="m-1">
-                {prop.post.commentsSrc.comments.map((comment) => (
-                  <ListGroup.Item>
-                    <div style={{ fontWeight: "bold", display: "inline" }}>
-                      {comment.author.displayName}:
-                    </div>
-                    {"   "}
-                    {comment.comment}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-              {message && <Message variant="danger">{message}</Message>}
-              <Form onSubmit={commentSubmitHandler}>
-                <Form.Group className="my-2" controlId="content">
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    onChange={(e) => setCommentContent(e.target.value)}
-                  />
-                </Form.Group>
-                <div className="d-flex align-items-end justify-content-end px-5">
-                  <Button className="btn" type="submit" variant="primary">
-                    Submit
-                  </Button>
-                </div>
-              </Form>
-            </div>
-          ) : (
-            ""
-          )}
-        </Card.Body>
-      </Card>
-    </div>
-  );
+          </Card.Body>
+        </Card>
+      </div>
+    );
+  } else {
+    return "";
+  }
 }
 
 export default Posts;
