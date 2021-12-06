@@ -27,13 +27,23 @@ from .models import Author, FriendRequest, Post, Comment, Like, Inbox
 from .forms import SignUpForm
 from .permission import IsAuthenticated, IsAuthorOrReadOnly, IsLocalAuthor
 from .converter import *
-from .node_connections import send_post_to_foreign_authors, send_to_friends, async_update_db, send_friend_request, send_like
+from .node_connections import send_post_to_foreign_authors, send_to_friends, send_friend_request, send_like, update_db
 
 from social_dist.settings import DJANGO_DEFAULT_HOST
 
 # Helper function on getting an author based on author_id
 
 # https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
+
+@api_view(['GET'])
+def view_update_db(request: Request):
+    """
+    Calling this endpoint will update the db
+    """
+    update_db(True, True)
+    
+    return HttpResponse("Updated Database")
+
 
 @login_required
 def home(request: Request) -> HttpResponseRedirect:
@@ -109,7 +119,6 @@ class LogoutView(APIView):
         request.user.auth_token.delete()
         return Response(status=200)
 
-# @swagger_auto_schema(methods=['get'], responses={200: AuthorSerializer(many=True)})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def authors_list_api(request: Request):
@@ -122,8 +131,6 @@ def authors_list_api(request: Request):
     return:
         - A Response (status=200) with type:"authors" and items that contains the list of author. 
     """
-    if IsLocalAuthor(request):
-        async_update_db(True, False)
 
     author_list = list(Author.objects.all().order_by('display_name'))
 
@@ -209,8 +216,6 @@ class AuthorDetail(APIView):
             - If author is found, a Response of the author's profile in JSON format is returned
             - If author is not found, a HttpResponseNotFound is returned
         """
-        if IsLocalAuthor(request):
-            async_update_db(True, False)
 
         author = get_author(author_id)
         if author == None:
@@ -269,8 +274,6 @@ class FollowerDetail(APIView):
             - If a follower is found, a Response of the follower's profile in JSON format is returned
             - If author (or follower if specified) is not found, a HttpResponseNotFound is returned
         """
-        if IsLocalAuthor(request):
-            async_update_db(True, False)
 
         author = get_author(author_id)
         if author == None:
@@ -418,8 +421,6 @@ class PostDetail(APIView):
             - If a post is found, a Response of the post's detail in JSON format is returned
             - If author (or post if specified) is not found, a HttpResponseNotFound is returned 
         """
-        if IsLocalAuthor(request):
-            async_update_db(True, True)
 
         if author_id == None:
             # If local author then get everything

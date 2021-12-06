@@ -3,13 +3,12 @@ import { Card, Nav } from "react-bootstrap";
 import Posts from "./Posts";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
-import { getPosts, getLikedPosts } from "../actions/postActions";
+import { getPosts, getLikedPosts, updateDB } from "../actions/postActions";
 import { getGithubEvent, getAuthorDetail } from "../actions/userActions";
 
 // Content of home page; tabs to select which list of posts to view
 function HomeContent() {
   const dispatch = useDispatch();
-
   const [tab, setTab] = useState(1);
 
   const getLiked = useSelector((state) => state.getLiked);
@@ -31,6 +30,7 @@ function HomeContent() {
   useEffect(() => {
     dispatch(getLikedPosts());
     dispatch(getPosts());
+    dispatch(updateDB());
   }, []);
 
   const [message, setMessage] = useState("");
