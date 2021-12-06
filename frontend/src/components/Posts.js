@@ -126,7 +126,6 @@ function Posts(prop) {
       // remove extra message banner
       setMessage();
       dispatch(postingComment(commentContent, post_author_id, post_id));
-      dispatch(getPosts());
     }
   };
 
@@ -172,10 +171,18 @@ function Posts(prop) {
           <Card.Title className="m-3 text-center">
             <u>{prop.post.title}</u>
           </Card.Title>
-          {prop.post&&prop.post.contentType != "text/image" ? (
-          <Card.Text className="mx-3 my-4">{content}</Card.Text>
-          ): (<img width="300" src={prop.post.content? "data:image/png;base64"+prop.post.content:null}></img>
-          )}  
+          {prop.post && prop.post.contentType != "text/image" ? (
+            <Card.Text className="mx-3 my-4">{content}</Card.Text>
+          ) : (
+            <img
+              width="100%"
+              src={
+                prop.post.content
+                  ? "data:image/png;base64" + prop.post.content
+                  : null
+              }
+            ></img>
+          )}
 
           <Row className="justify-content-between m-1">
             <Col className="d-flex align-items-center">
@@ -194,8 +201,8 @@ function Posts(prop) {
               <Button
                 className={
                   (userInfo && prop.post.visibility == "PUBLIC") ||
-                    (userInfo && prop.post.author.id == userInfo.author.id) ||
-                    prop.post.visibility == "PRIVATE"
+                  (userInfo && prop.post.author.id == userInfo.author.id) ||
+                  prop.post.visibility == "PRIVATE"
                     ? "m-1"
                     : "m-1 disabled"
                 }

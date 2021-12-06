@@ -37,6 +37,9 @@ import {
   UNFOLLOW_FAIL,
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
+  ACCEPT_FRIEND_FAIL,
+  ACCEPT_FRIEND_REQUEST,
+  ACCEPT_FRIEND_SUCCESS,
 } from "../constants/userConstants";
 
 export const userRegisterReducer = (state = {}, action) => {
@@ -233,6 +236,22 @@ export const unfollowReducer = (state = {}, action) => {
       return { loading: false, response: action.payload };
 
     case UNFOLLOW_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const acceptFriendReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ACCEPT_FRIEND_REQUEST:
+      return { loading: true };
+
+    case ACCEPT_FRIEND_SUCCESS:
+      return { loading: false, response: action.payload };
+
+    case ACCEPT_FRIEND_FAIL:
       return { loading: false, error: action.payload };
 
     default:

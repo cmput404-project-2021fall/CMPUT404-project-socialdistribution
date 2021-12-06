@@ -40,16 +40,18 @@ function ProfileContent(props) {
   const { error: unfollowError, response: unfollowResponse } = unfollow;
 
   const view_user_id =
-    myInfo.author_id != props.view_user_id ? props.view_user_id : null;
+    myInfo && myInfo.author_id != props.view_user_id
+      ? props.view_user_id
+      : null;
 
   useEffect(() => {
     if (view_user_id == null) {
       dispatch(getAuthorDetail());
     } else {
       dispatch(getAuthorDetail(view_user_id));
-      // check if param2 follows param1; use this to check if I follow them
+      // check if I am following view_user
       dispatch(checkFollowingStatus(view_user_id, myInfo.author_id));
-      // check if param follows me
+      // check if param following me
       dispatch(followingUserCheck(view_user_id));
     }
   }, []);
@@ -129,24 +131,23 @@ function ProfileContent(props) {
               <Alert className="text-center" variant="info">
                 Friends
               </Alert>
-            ) : meFollowThem && !theyFollowMe ? (
-              <Alert className="text-center" variant="secondary">
-                Following
-              </Alert>
             ) : (
               ""
             )}
-            {!meFollowThem && !theyFollowMe ? (
+            {!meFollowThem ? (
               <Button className="m-2" onClick={() => friendRequestHandler()}>
-                Add Friend
+                Follow Request
               </Button>
-            ) : meFollowThem ? (
+            ) : (
+              ""
+            )}
+            {theyFollowMe ? (
               <Button
                 className="m-2"
                 variant="danger"
                 onClick={() => unfollowHandler()}
               >
-                Unfollow
+                Kick Follow
               </Button>
             ) : (
               ""
