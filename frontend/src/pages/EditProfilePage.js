@@ -10,6 +10,7 @@ import EditProfileContent from "../components/EditProfileContent";
 function EditProfilePage() {
   let history = useHistory();
 
+  // get user info
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 

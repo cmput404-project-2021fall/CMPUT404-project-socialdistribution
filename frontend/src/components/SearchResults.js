@@ -8,10 +8,8 @@ class SearchResultItem extends Component{
         
     }
     
-
-      
+    // display post searching result
     render(){
-
         return(
             <div>
             <Col>

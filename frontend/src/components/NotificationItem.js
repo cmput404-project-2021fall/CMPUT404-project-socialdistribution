@@ -9,6 +9,7 @@ class FollowerItem extends Component{
         this.handleClick = this.handleClick.bind(this);
     }
     
+    // if clicked, flip its state
     handleClick() {
         this.setState(prevState => ({
           isToggleOn: !prevState.isToggleOn

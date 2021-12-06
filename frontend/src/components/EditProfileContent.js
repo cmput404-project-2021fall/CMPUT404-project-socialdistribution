@@ -18,6 +18,7 @@ function EditProfileContent() {
   const userDetailEdit = useSelector((state) => state.userDetailEdit);
   const { error, loading, userInfo } = userDetailEdit;
 
+  // update new user info if displayname is not empty
   const submitHandler = (e) => {
     e.preventDefault();
     if (displayname == "") {
@@ -31,7 +32,7 @@ function EditProfileContent() {
   let history = useHistory();
 
   useEffect(() => {
-    // redirect user to profile if edit is successful
+    // redirect the user to profile page if edit is successful
     if (userInfo) {
       history.push("/profile");
       window.location.reload();

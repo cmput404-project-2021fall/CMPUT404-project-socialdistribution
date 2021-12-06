@@ -27,6 +27,7 @@ import {
   GET_NOTIFICATIONS_FAIL,
 } from "../constants/postConstants";
 
+// create a post
 export const createPost =
   (title, content, contentType, visibility) => async (dispatch, getState) => {
     try {
@@ -72,10 +73,12 @@ export const createPost =
     }
   };
 
+// reset post
 export const postReset = () => (dispatch) => {
   dispatch({ type: POST_RESET });
 };
 
+// get all posts
 export const getPosts = () => async (dispatch, getState) => {
   try {
     dispatch({
@@ -109,6 +112,7 @@ export const getPosts = () => async (dispatch, getState) => {
   }
 };
 
+// update database
 export const updateDB = () => async (dispatch, getState) => {
   try {
     let host = window.location.host
@@ -118,6 +122,7 @@ export const updateDB = () => async (dispatch, getState) => {
   }
 };
 
+// add comment to a post
 export const postingComment =
   (comment, poster_id, post_id) => async (dispatch, getState) => {
     try {
@@ -163,6 +168,7 @@ export const postingComment =
     }
   };
 
+// get all comments of a post
 export const getAllComments =
   (author_id, post_id) => async (dispatch, getState) => {
     try {
@@ -201,6 +207,7 @@ export const getAllComments =
     }
   };
 
+// delete a post
 export const deletePost = (post_id) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -238,6 +245,7 @@ export const deletePost = (post_id) => async (dispatch, getState) => {
   }
 };
 
+// like a post
 export const likePost = (post_url, poster_id) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -283,6 +291,7 @@ export const likePost = (post_url, poster_id) => async (dispatch, getState) => {
   }
 };
 
+// get posts that are liked by the user
 export const getLikedPosts = () => async (dispatch, getState) => {
   try {
     dispatch({
@@ -320,6 +329,7 @@ export const getLikedPosts = () => async (dispatch, getState) => {
   }
 };
 
+// get all notifications from inbox
 export const getAllNotifications = () => async (dispatch, getState) => {
   try {
     dispatch({

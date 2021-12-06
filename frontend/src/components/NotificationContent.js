@@ -22,12 +22,14 @@ function NotificationContent(prop) {
   const acceptFriend = useSelector((state) => state.acceptFriend);
   const { error, response } = acceptFriend;
 
+  // accept friend request
   const acceptRquestHandler = () => {
     let requester_id = parseId(prop);
     dispatch(acceptFriendRequest(requester_id));
     response && window.location.reload();
   };
 
+  // parse the user id from notifications
   const parseId = (p) => {
     let idList = p.notification.actor.id.split("/");
     let id = "";

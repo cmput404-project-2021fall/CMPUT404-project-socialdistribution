@@ -34,11 +34,13 @@ const SearchResultPage = (props) => {
 
   var searchResultPosts = [];
 
-  if(searchText==" "){
+  // if search empty, then show the whole list of posts
+  if(!searchText || searchText==" "){
     for( var i=0;i<posts.length;i++){ 
       searchResultPosts.push(posts[i]);
     }
   }else{
+    // get all posts that contain the key word
     for( var i=0;i<posts.length;i++){ 
       if ( (posts[i].title&&posts[i].title.indexOf(searchText) != -1) || (posts[i].content&&posts[i].content.indexOf(searchText) != -1)) {
         searchResultPosts.push(posts[i]);

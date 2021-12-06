@@ -35,23 +35,30 @@ function Posts(prop) {
   const { userInfo } = userLogin;
   const postLike = useSelector((state) => state.postLike);
   const { error: postLikeError, reponse: postLikeResponse } = postLike;
+  // post comments
   const postComment = useSelector((state) => state.postComment);
   const { error: postCommentError, reponse: postCommentResponse } = postComment;
-
+  // show or reveal comment tab
   const [commentTab, setCommentTab] = useState(false);
+  // states of share button
   const [share, setShare] = useState(false);
+  // states of like button
   const [like, setLike] = useState(null);
+  // number of likes
   const [numLikes, setNumLikes] = useState(prop ? prop.post.numLikes : 0);
+  // comment content
   const [commentContent, setCommentContent] = useState("");
+  // error message if there's error
   const [message, setMessage] = useState("");
 
+  // check if followed
   const checkFollowing = useSelector((state) => state.checkFollowing);
   const { error: error1, response: response1 } = checkFollowing;
 
   const getUserFollower = useSelector((state) => state.getUserFollower);
   const { error: error2, response: response2 } = getUserFollower;
 
-  // did I like this post already?
+  // display liked if a post is already liked 
   if (like == null) {
     prop.liked.forEach((element) => {
       if (element.object == prop.post.url) {
@@ -63,6 +70,7 @@ function Posts(prop) {
     }
   }
 
+  // share functionalities have not been finished yet
   const sharePost = () => {
     if (/*your didn't share/create this post &&*/ !share) {
       setShare(true);
@@ -82,6 +90,7 @@ function Posts(prop) {
     }
   }
 
+  // comment tab
   const commentHandler = () => {
     if (!commentTab) {
       setCommentTab(true);
@@ -90,13 +99,14 @@ function Posts(prop) {
     }
   };
 
+  // like a post
   const likeHandler = () => {
     setLike(true);
     dispatch(likePost(prop.post.url, post_author_id));
     setNumLikes(prop.post.numLikes);
   };
 
-  // is this post written by me?
+  // check if the post is writen by the user
   const isMyPost =
     prop != null && userInfo != null
       ? userInfo.author_id == post_author_id
@@ -116,6 +126,7 @@ function Posts(prop) {
   const [meFollowThem, setMeFollowThem] = useState();
   const [theyFollowMe, setTheyFollowMe] = useState();
 
+  // get the following relation between the two users
   if ((response1 || error1) && (response2 || error2) && meFollowThem == null) {
     // do I follow them?
     if (error1 == "Follower Author Not Found") {
@@ -137,6 +148,7 @@ function Posts(prop) {
   const parser = new CommonMark.Parser();
   const renderer = new ReactRenderer();
 
+  // get post content
   var content = prop ? prop.post.content : "";
 
   if (prop.post.contentType == "text/markdown") {
@@ -145,6 +157,7 @@ function Posts(prop) {
     content = renderer.render(ast);
   }
 
+  // delete a post
   const postDelete = useSelector((state) => state.postDelete);
   const { error, success, post } = postDelete;
 
@@ -165,7 +178,8 @@ function Posts(prop) {
       dispatch(postingComment(commentContent, post_author_id, post_id));
     }
   };
-
+  
+  // show friend posts only if it's friend only type and its author is user's friend
   if (
     (prop.post.visibility == "FRIENDS" && meFollowThem && theyFollowMe) ||
     prop.post.visibility != "FRIENDS" ||

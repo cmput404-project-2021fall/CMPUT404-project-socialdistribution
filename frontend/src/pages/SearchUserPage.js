@@ -30,16 +30,18 @@ const SearchUserPage = (props) => {
 
   console.log("search users");
   console.log(users);
-  
+
   var searchResultUsers = [];
 
-  if(searchText==" "){
+  // if search empty, then show the whole list of posts
+  if(!searchText || searchText==" "){
     for(var i=0; i<users.length; i++){
         if(users[i].displayName){
             searchResultUsers.push(users[i]);  
         }  
     }
   }else{
+    // get all users that usernames contain the key word
     for(var i=0; i<users.length; i++){
         if(users[i].displayName && users[i].displayName.indexOf(searchText)!=-1){
             if(!users[i].profile_img){
