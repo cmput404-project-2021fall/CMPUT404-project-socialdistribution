@@ -119,3 +119,4 @@ This is our collection of references and guides used for the project
 12. Adding key,value pair to dictionary https://www.tutorialspoint.com/add-a-key-value-pair-to-dictionary-in-python
 13. How to specify headers for testing purposes https://stackoverflow.com/questions/31902901/django-test-client-method-override-header
 14. How to change the self.client to make test requests as a specific user https://stackoverflow.com/questions/2619102/djangos-self-client-login-does-not-work-in-unit-tests
+15. How to access certain request headers from a request https://stackoverflow.com/questions/10613315/accessing-request-headers-on-django-python
