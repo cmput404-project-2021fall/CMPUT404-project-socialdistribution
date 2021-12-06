@@ -115,11 +115,11 @@ export const getPosts = () => async (dispatch, getState) => {
 // update database
 export const updateDB = () => async (dispatch, getState) => {
   try {
-    let host = window.location.host
-    fetch('https://' + host + '/api/update').then(res => res.json()).then(data => console.log(data));
-  } catch (error) {
-
-  }
+    let host = window.location.host;
+    fetch("https://" + host + "/api/update")
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+  } catch (error) {}
 };
 
 // add comment to a post
@@ -225,10 +225,9 @@ export const deletePost = (post_id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.delete(
-      `/api/author/${userInfo.author_id}/posts/${post_id}`,
-      config
-    );
+    const { data } = await axios
+      .delete(`/api/author/${userInfo.author_id}/posts/${post_id}`, config)
+      .then(window.location.reload());
 
     dispatch({
       type: POST_DELETE_SUCCESS,

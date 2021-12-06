@@ -58,7 +58,7 @@ function Posts(prop) {
   const getUserFollower = useSelector((state) => state.getUserFollower);
   const { error: error2, response: response2 } = getUserFollower;
 
-  // display liked if a post is already liked 
+  // display liked if a post is already liked
   if (like == null) {
     prop.liked.forEach((element) => {
       if (element.object == prop.post.url) {
@@ -163,7 +163,6 @@ function Posts(prop) {
 
   const deleteHandler = () => {
     dispatch(deletePost(post_id));
-    window.location.reload();
   };
 
   const user_id = prop.post.author.id.split("/").pop();
@@ -178,7 +177,7 @@ function Posts(prop) {
       dispatch(postingComment(commentContent, post_author_id, post_id));
     }
   };
-  
+
   // show friend posts only if it's friend only type and its author is user's friend
   if (
     (prop.post.visibility == "FRIENDS" && meFollowThem && theyFollowMe) ||

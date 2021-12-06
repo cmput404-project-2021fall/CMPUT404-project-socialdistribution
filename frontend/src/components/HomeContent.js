@@ -29,7 +29,7 @@ function HomeContent() {
 
   // set error message if there's error
   const [message, setMessage] = useState("");
-  
+
   // get all post items
   const posts = post ? post.items : [];
 
@@ -51,12 +51,11 @@ function HomeContent() {
   };
 
   useEffect(() => {
+    dispatch(updateDB());
     dispatch(getLikedPosts());
     dispatch(getPosts());
     dispatch(getAuthorDetail());
-    dispatch(updateDB());
   }, []);
-
 
   // get github activity if the user has a github url
   const github_url = userDetailInfo ? userDetailInfo : "";
