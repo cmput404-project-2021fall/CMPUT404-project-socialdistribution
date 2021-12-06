@@ -112,7 +112,7 @@ export const getPosts = () => async (dispatch, getState) => {
 export const updateDB = () => async (dispatch, getState) => {
   try {
     let host = window.location.host
-    fetch('http://' + host + '/api/update').then(res => res.json()).then(data => console.log(data));
+    fetch('https://' + host + '/api/update').then(res => res.json()).then(data => console.log(data));
   } catch (error) {
 
   }
