@@ -12,9 +12,12 @@ import { LinkContainer } from "react-router-bootstrap";
 import Avatar from "../images/avatar.jpg";
 
 function FollowerItem(prop) {
-  console.log(prop);
+  
+  // get follower info passed in
   var author_id = "";
   let arr = prop.follower.id.split("/");
+
+  // get the id from follower info
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] == "author") {
       author_id = arr[i + 1];
@@ -39,7 +42,6 @@ function FollowerItem(prop) {
             <LinkContainer
               to={{
                 pathname: "/profile/" + author_id,
-                // state: { user_id: user_id },
               }}
             >
               <Button className="m-1" variant="success">

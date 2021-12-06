@@ -44,6 +44,8 @@ import {
   ACCEPT_FRIEND_SUCCESS,
 } from "../constants/userConstants";
 
+
+// user registration  
 export const register =
   (name, display, github = "", password, cPassword) =>
   async (dispatch, getState) => {
@@ -88,6 +90,7 @@ export const register =
     }
   };
 
+// user login
 export const login = (username, password) => async (dispatch) => {
   try {
     const form = new FormData();
@@ -129,6 +132,7 @@ export const login = (username, password) => async (dispatch) => {
   }
 };
 
+// get the user's info
 export const getAuthorDetail =
   (id = null) =>
   async (dispatch, getState) => {
@@ -171,6 +175,7 @@ export const getAuthorDetail =
     }
   };
 
+// edit the user's info
 export const editAuthorDetail =
   (displayname, github) => async (dispatch, getState) => {
     try {
@@ -210,6 +215,7 @@ export const editAuthorDetail =
     }
   };
 
+// get a list of all user's friends
 export const authorFriendlist = () => async (dispatch, getState) => {
   try {
     dispatch({
@@ -247,6 +253,7 @@ export const authorFriendlist = () => async (dispatch, getState) => {
   }
 };
 
+// user logout
 export const logout = () => async (dispatch, getState) => {
   const {
     userLogin: { userInfo },
@@ -265,7 +272,7 @@ export const editReset = () => (dispatch) => {
   dispatch({ type: USER_DETAIL_EDIT_RESET });
 };
 
-// get user list
+// get a list of all users
 export const getUsers = () => async (dispatch, getState) => {
   try {
     dispatch({
@@ -299,6 +306,7 @@ export const getUsers = () => async (dispatch, getState) => {
   }
 };
 
+// check if the user is followed by user id
 export const followingUserCheck =
   (foreign_user_id) => async (dispatch, getState) => {
     try {
@@ -337,6 +345,7 @@ export const followingUserCheck =
     }
   };
 
+// check following status of two users with ids
 export const checkFollowingStatus =
   (author_id, foreign_id) => async (dispatch, getState) => {
     try {
@@ -375,6 +384,7 @@ export const checkFollowingStatus =
     }
   };
 
+// send friend request
 export const sendFriendRequest =
   (their_id, my_object, their_object) => async (dispatch, getState) => {
     try {
@@ -421,6 +431,7 @@ export const sendFriendRequest =
     }
   };
 
+// get a list of all followers
 export const getFollowerList = () => async (dispatch, getState) => {
   try {
     dispatch({
@@ -458,6 +469,7 @@ export const getFollowerList = () => async (dispatch, getState) => {
   }
 };
 
+// get github event
 export const getGithubEvent = (github_id) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -494,6 +506,7 @@ export const getGithubEvent = (github_id) => async (dispatch, getState) => {
   }
 };
 
+// unfollow a user
 export const unfollowUser = (foreign_id) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -531,6 +544,7 @@ export const unfollowUser = (foreign_id) => async (dispatch, getState) => {
   }
 };
 
+// accept one's friend request
 export const acceptFriendRequest =
   (foreign_id) => async (dispatch, getState) => {
     try {

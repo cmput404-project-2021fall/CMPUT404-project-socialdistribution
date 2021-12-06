@@ -9,10 +9,14 @@ import { getGithubEvent, getAuthorDetail } from "../actions/userActions";
 // Content of home page; tabs to select which list of posts to view
 function HomeContent() {
   const dispatch = useDispatch();
+
+  // there are four tabs: "all posts", "friend posts", "my posts", "my stream"
   const [tab, setTab] = useState(1);
 
+  // get posts that are liked by the user
   const getLiked = useSelector((state) => state.getLiked);
   const { error: getLikedError, response } = getLiked;
+  const likedPosts = response ? response.items : [];
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -23,11 +27,13 @@ function HomeContent() {
   const postList = useSelector((state) => state.postList);
   const { error, success, post } = postList;
 
+  // set error message if there's error
   const [message, setMessage] = useState("");
-  const likedPosts = response ? response.items : [];
+  
+  // get all post items
   const posts = post ? post.items : [];
 
-  // is this posted by me?
+  // if it is posted by me, then we have access to editing and deleting
   const isMyPost = (p) => {
     let idList = p.author.id.split("/");
     let id = "";
@@ -47,12 +53,14 @@ function HomeContent() {
   useEffect(() => {
     dispatch(getLikedPosts());
     dispatch(getPosts());
-    //dispatch(updateDB());
     dispatch(getAuthorDetail());
   }, []);
 
+
+  // get github activity if the user has a github url
   const github_url = userDetailInfo ? userDetailInfo : "";
 
+  // get user's github id
   const github_id =
     github_url && github_url.github
       ? github_url.github.match("[^/]+(?!.*/)")[0]
@@ -71,6 +79,7 @@ function HomeContent() {
   var githubActivities = [];
   var githubAvatarUrl = "";
 
+  // add all user's github activities to a list to display
   if (githubEvent) {
     for (var i = 0; i < githubEvent.length; i++) {
       var githubActivity = {

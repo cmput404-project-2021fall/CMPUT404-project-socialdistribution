@@ -16,9 +16,9 @@ import { getFollowerList } from "../actions/userActions";
 
 function NotificationPage() {
   const dispatch = useDispatch();
+  // get follower list and display each of them
   const followerList = useSelector((state) => state.followerList);
   const { error, response } = followerList;
-  console.log(followerList);
 
   useEffect(() => {
     dispatch(getFollowerList());

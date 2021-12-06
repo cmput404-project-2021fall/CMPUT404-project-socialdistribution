@@ -13,6 +13,7 @@ function SideBar() {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  // display sidebar
   return (
     <Navbar bg="secondary" className="justify-content-center">
       <Nav defaultActiveKey="/home" className="flex-column">
