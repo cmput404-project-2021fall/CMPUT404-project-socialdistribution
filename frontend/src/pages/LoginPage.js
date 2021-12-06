@@ -13,6 +13,7 @@ function LoginPage({ location, history }) {
 
   const dispatch = useDispatch();
 
+  // redirect after login
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -24,6 +25,7 @@ function LoginPage({ location, history }) {
     }
   }, [history, userInfo, redirect]);
 
+  // if username and password match, dispatch Login
   const submitHandler = (e) => {
     e.preventDefault();
     if (username == "" || password == "") {

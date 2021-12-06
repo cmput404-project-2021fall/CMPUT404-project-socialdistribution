@@ -26,6 +26,7 @@ function NotificationPage() {
     }
   }, [history, userInfo]);
 
+  // get notifications and display them by NotificationContent
   const getNotifications = useSelector((state) => state.getNotifications);
   const { error, response } = getNotifications;
 

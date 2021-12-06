@@ -21,21 +21,25 @@ function ProfileContent(props) {
 
   const dispatch = useDispatch();
 
+  // get user info and detail
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo: myInfo } = userLogin;
-
   const userDetail = useSelector((state) => state.userDetail);
   const { userInfo } = userDetail;
 
+  // check following relation
   const checkFollowing = useSelector((state) => state.checkFollowing);
   const { error, response } = checkFollowing;
 
+  // get a list of user's followers
   const getUserFollower = useSelector((state) => state.getUserFollower);
   const { error: error2, response: response2 } = getUserFollower;
 
+  // send friend request
   const friendRequest = useSelector((state) => state.friendRequest);
   const { error: FRerror, response: FRresponse } = friendRequest;
 
+  // unfollow a user
   const unfollow = useSelector((state) => state.unfollow);
   const { error: unfollowError, response: unfollowResponse } = unfollow;
 
@@ -60,6 +64,7 @@ function ProfileContent(props) {
   const [meFollowThem, setMeFollowThem] = useState();
   const [theyFollowMe, setTheyFollowMe] = useState();
 
+  // get the following relation between the two users
   if ((response || error) && (response2 || error2) && meFollowThem == null) {
     // do I follow them?
     if (error == "Follower Author Not Found") {
@@ -75,10 +80,12 @@ function ProfileContent(props) {
     }
   }
 
+  // send a friend request
   const friendRequestHandler = () => {
     dispatch(sendFriendRequest(view_user_id, myInfo.author, userInfo));
   };
 
+  // send unfollow request
   const unfollowHandler = () => {
     dispatch(unfollowUser(view_user_id));
     window.location.reload();

@@ -22,9 +22,11 @@ function PostForm() {
 
   const dispatch = useDispatch();
 
+  // create the post
   const postCreate = useSelector((state) => state.postCreate);
   const { error, success, post } = postCreate;
 
+  // get the users friend list
   const userFriendlist = useSelector((state) => state.userFriendlist);
   const { error: friendError, userFriends } = userFriendlist;
 
@@ -43,6 +45,7 @@ function PostForm() {
       : ""
   );
 
+  // encode the image to base 64 and dispatch when an image is uploaded
   const encodeFileBase64 = () => {
     var reader = new FileReader();
     if (file) {
@@ -62,8 +65,8 @@ function PostForm() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    // if the user upload an image and the title is not empty, encode it
     if(cate=="text/image"){
-      // encode to base64 and dispatch
       if(title == ""){
         setMessage("Please fill in title to make a post.");
       }
@@ -72,12 +75,13 @@ function PostForm() {
       }
     }
     else{
+    
+    // if the user make a plain text post, just create a post and dispatch
     if (title == "" || content == "") {
       setMessage("Please fill in title and content to make a post.");
     } else {
       // remove extra message banner
       setMessage();
-
       dispatch(createPost(title, content, contentType, visibility));
     }}
   };
@@ -88,7 +92,6 @@ function PostForm() {
   const renderDiff = () => {
     console.log(cate);
   }
-
 
   let history = useHistory();
 

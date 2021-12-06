@@ -19,9 +19,11 @@ function SignUpPage({ location, history }) {
 
   const dispatch = useDispatch();
 
+  // register for the user
   const userRegister = useSelector((state) => state.userRegister);
   const { error, userInfo } = userRegister;
 
+  // check if they have valid username and password
   const submitHandler = (e) => {
     e.preventDefault();
     if (password != cPwd) {

@@ -22,7 +22,10 @@ function Headers(props) {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  // search content
   const [searchContent, setSearchContent] = useState(" ");
+
+  // select searching method by user or post
   const [searchCategory, setSearchCategory] = useState(
     props.searchCategory ? props.searchCategory : "post"
   );
@@ -30,6 +33,7 @@ function Headers(props) {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  // logout
   const logoutHandler = () => {
     dispatch(logout());
   };
