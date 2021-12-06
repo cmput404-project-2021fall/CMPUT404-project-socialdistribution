@@ -196,7 +196,8 @@ def send_to_friends(author: Author, payload: dict):
     """
     try:
         internal_post_dict = sanitize_post_dict(payload)
-
+        if internal_post_dict == None:
+            raise RuntimeError('Post failed to sanitize')
         followers = list(author.followers.all())
         friend_url_list = []
         auth_info_list = []

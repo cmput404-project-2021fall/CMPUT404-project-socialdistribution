@@ -879,6 +879,9 @@ class InboxDetail(APIView):
         
         if request_dict['type'].lower() == 'post':
             post_dict = sanitize_post_dict(request_dict)
+            if post_dict == None:
+                return Response(data={'detail':"Post object is a bad form"}, status=400)
+
             post, post_created = Post.objects.get_or_create(id=post_dict['id'], defaults=post_dict)
             inbox.posts.add(post)
             if post_created:
@@ -889,6 +892,8 @@ class InboxDetail(APIView):
         
         elif request_dict['type'].lower() == 'follow':
             friend_request_dict = sanitize_friend_request_dict(request_dict)
+            if friend_request_dict == None:
+                return Response(data={'detail':"Follow object is a bad form"}, status=400)
 
             friend_request, friend_request_created = FriendRequest.objects.get_or_create(
                 actor=friend_request_dict['actor'], 
@@ -907,6 +912,8 @@ class InboxDetail(APIView):
 
         elif request_dict['type'].lower() == 'like':
             like_dict = sanitize_like_dict(request_dict)
+            if like_dict == None:
+                return Response(data={'detail':"like object is a bad form"}, status=400)
             try:
                 like, created = Like.objects.get_or_create(
                     author=like_dict['author'], 

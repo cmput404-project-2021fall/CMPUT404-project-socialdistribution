@@ -51,6 +51,8 @@ def sanitize_post_dict(post: dict, node: str = None):
     try:
         # assuming that the author dict is in the public form
         author_dict = sanitize_author_dict(post['author'])
+        if author_dict == None:
+            return None
         author, created = Author.objects.get_or_create(id=author_dict['id'], defaults=author_dict)
         # These are required fields
         # Remove the trailing /
@@ -97,6 +99,8 @@ def sanitize_post_dict(post: dict, node: str = None):
 def sanitize_comment_dict(comment: dict, post_obj: Post, node: str = None):
     try:
         author_dict = sanitize_author_dict(comment['author'])
+        if author_dict == None:
+            return None
         author, created = Author.objects.get_or_create(id=author_dict['id'], defaults=author_dict)
         if 'content' in comment:
             comment['comment'] = comment['content']
@@ -131,6 +135,8 @@ def sanitize_comment_dict(comment: dict, post_obj: Post, node: str = None):
 def sanitize_like_dict(like: dict, node: str = None):
     try:
         author_dict = sanitize_author_dict(like['author'])
+        if author_dict == None:
+            return None
         author, created = Author.objects.get_or_create(id=author_dict['id'], defaults=author_dict)
         converted_like = {
             'summary': like['summary'],
@@ -147,6 +153,8 @@ def sanitize_friend_request_dict(friend_request: dict, node: str = None):
     try:
         actor_dict = sanitize_author_dict(friend_request['actor'])
         object_dict = sanitize_author_dict(friend_request['object'])
+        if actor_dict == None or object_dict == None:
+            return None
         # Get or create the actor and get the object
         actor, created = Author.objects.get_or_create(id=actor_dict['id'], defaults=actor_dict)
         object = Author.objects.get(id=object_dict['id'])
