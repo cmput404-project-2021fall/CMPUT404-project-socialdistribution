@@ -27,7 +27,8 @@ def update_db(update_authors: bool, update_posts: bool, time_profile = True):
         update_authors - If True will get all the authors from the remote node
         update_posts - If True will get all the posts from the remote node
 
-    return
+    return:
+        None
     """
     start_time = time.time()
     foreign_author_id_list = []
@@ -36,7 +37,7 @@ def update_db(update_authors: bool, update_posts: bool, time_profile = True):
             continue
         # This will add or remove authors on the local db based on the state of the remote node
         foreign_author_ids = update_remote_authors(node.host, node.requesting_auth_info)
-        foreign_likes_ids = update_remote_likes(node.host, node.requesting_auth_info, foreign_author_ids)
+        foreign_likes_ids = update_remote_likes(node.requesting_auth_info, foreign_author_ids)
         # This will add or remove posts on the local db based on the state of the remote node
         foreign_posts_ids = update_remote_posts(node.host, node.requesting_auth_info, foreign_author_ids)
         foreign_comments_ids = update_remote_comments(node.host, node.requesting_auth_info, foreign_posts_ids)
@@ -46,12 +47,26 @@ def update_db(update_authors: bool, update_posts: bool, time_profile = True):
         print(f'update_db time taken {time.time() - start_time} s')
 
 def async_update_db(update_authors: bool, update_posts: bool, time_profile=True):
+    """
+    Async update the db while the user does stuff
+    """
     threading.Thread(target=update_db, name="update_db", args=(update_authors, update_posts, time_profile)).start()
 
 
-def async_get(url, auth=None, headers=None, params=None, object_instance=None):
+def async_get(url: str, auth: tuple = None, headers:dict = None, params: dict = None, object_instance=None):
     """
     This is a callback function that will async get a json object from the url provided
+
+    args:
+        url - The url to make the GET request
+        auth - The auth information to use
+        headers - The headers for the request
+        params - The query parameters for the request
+        object_instance - An django model instance or auxiliary information to be associated with a request
+
+    return:
+        A python dict object of the response with object_instance included. 
+        If there are any errors and an empty dict is return
     """
     host_name = urlparse(url).netloc
     node = Node.objects.get(host__icontains=str(host_name))
@@ -61,6 +76,7 @@ def async_get(url, auth=None, headers=None, params=None, object_instance=None):
         # find the path
         path = url[url.find('/') + 1:]
         url = str(node.host) + path
+    # Check if we need auth to connect to the node
     if auth != None:
         if node.connect_with_auth:
             auth_info = auth
@@ -68,6 +84,7 @@ def async_get(url, auth=None, headers=None, params=None, object_instance=None):
             auth_info = None
     else:
         auth_info = auth
+    # Make the GET request
     res = requests.get(
         url,
         headers=headers,
@@ -79,8 +96,10 @@ def async_get(url, auth=None, headers=None, params=None, object_instance=None):
         return {}
     try:
         res_dict = res.json()
+        # This is for team19 where some of their responses are in a list and not a json object
         if isinstance(res_dict, list) and len(res_dict) > 0:
             res_dict = res_dict[0]
+        # if the list is empty i.e., does not exist
         elif isinstance(res_dict, list) and len(res_dict) == 0:
             res_dict = {}
         res_dict['object_instance'] = object_instance
@@ -89,9 +108,20 @@ def async_get(url, auth=None, headers=None, params=None, object_instance=None):
         return {}
     return res_dict
 
-def async_post(url, auth=None, headers=None, params=None, data=None):
+def async_post(url:str, auth: tuple = None, headers: dict = None, params:dict = None, data: dict = None):
     """
     This is a callback function that will async post a json object to the url provided
+
+    args:
+        url - The url to make the GET request
+        auth - The auth information to use
+        headers - The headers for the request
+        params - The query parameters for the request
+        object_instance - An django model instance or auxiliary information to be associated with a request
+
+    return:
+        A python dict object of the response with object_instance included. 
+        If there are any errors and an empty dict is return
     """
     host_name = urlparse(url).netloc
     node = Node.objects.get(host__icontains=str(host_name))
@@ -101,6 +131,7 @@ def async_post(url, auth=None, headers=None, params=None, data=None):
         # find the path
         path = url[url.find('/') + 1:]
         url = str(node.host) + path
+    # Check if we need auth to connect to the node
     if auth != None:
         if node.connect_with_auth:
             auth_info = auth
@@ -108,6 +139,7 @@ def async_post(url, auth=None, headers=None, params=None, data=None):
             auth_info = None
     else:
         auth_info = auth
+    # Make the POST request
     res = requests.post(
         url,
         headers=headers,
@@ -128,6 +160,12 @@ def async_post(url, auth=None, headers=None, params=None, data=None):
 def send_post_to_foreign_authors(post: Post):
     """
     Helper function to send to all foreign authors' inboxes
+
+    args:
+        post - The post object to send to all foreign authors
+    
+    return:
+        None
     """
     try:
         remote_authors = Author.objects.filter(user__isnull=True)
@@ -146,11 +184,14 @@ def send_post_to_foreign_authors(post: Post):
 
 def send_to_friends(author: Author, payload: dict):
     """
-    This will send payload to all the authors' friend inbox
+    This will send payload to all the author's friend's inbox
 
     args:
         author: The author object to send from
         payload: The json object to send
+    
+    return:
+        None
     """
     try:
         internal_post_dict = sanitize_post_dict(payload)
@@ -204,10 +245,11 @@ def send_friend_request(author: Author, payload: dict):
     args:
         author: The author object to send to
         payload: The json object to send
+    
+    return:
+        None
     """
     try:
-        internal_post_dict = sanitize_post_dict(payload)
-
         friend_url_list = []
         auth_info_list = []
         header_list = []
@@ -242,10 +284,11 @@ def send_like(author: Author, payload: dict):
     args:
         author: The author object to send to
         payload: The json object to send
+
+    return:
+        None
     """
     try:
-        internal_post_dict = sanitize_post_dict(payload)
-
         friend_url_list = []
         auth_info_list = []
         header_list = []
@@ -277,9 +320,16 @@ def send_like(author: Author, payload: dict):
 def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_profile = True):
     """
     Update remote posts based on the list of foreign author ids
+
+    args:
+        host - The host url of the remote node
+        auth - The authentication information to connect to the remote node
+        foreign_author_ids - The list of foreign author ids to get the public posts from
+        time_profile - If True will time the execution of this function call
     
     Return:
-        Will return a list of ids from valid (sanitized posts) from the remote host
+        Will return a list of ids from valid (sanitized posts) from the remote host.
+        If there is an error then an empty list is returned
     """
     try:
         start_time = time.time()
@@ -301,7 +351,7 @@ def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_pro
                         continue
                     post_dict_list.append(post)
             # Add, update or delete posts based on the foreign state
-            CRUD_remote_post(host, auth, post_dict_list)
+        CRUD_remote_post(host, post_dict_list)
 
     except Exception as e:
         print("update_remote_posts exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
@@ -312,9 +362,16 @@ def update_remote_posts(host: str, auth: str, foreign_author_ids: list, time_pro
     
     return [post['id'] for post in post_dict_list]
 
-def CRUD_remote_post(host: str, auth: str, post_dict_list: list):
+def CRUD_remote_post(host: str, post_dict_list: list):
     """
     This will create, update or delete posts on the local database based on the remote response
+
+    args:
+        host - The url of the remote node
+        post_dict_list - The list of posts in private dict form to add, update, or delete from 
+    
+    return:
+        None
     """
     try:
         for post_dict in post_dict_list:
@@ -333,8 +390,15 @@ def update_remote_comments(host: str, auth: str, foreign_post_ids: list, time_pr
     """
     This will update remote comments based on the list of foreign posts.
 
+    args:
+        host - The host url of the remote node
+        auth - The authentication information to connect to the remote node
+        foreign_post_ids - The list of foreign post ids to update the comments from
+        time_profile - If True will time execution of the function. 
+
     Return:
         Will return a list of ids from valid (sanitized comments) from the remote host
+        If there are any errors an empty list is returned
     """
     try:
         start_time = time.time()
@@ -362,7 +426,7 @@ def update_remote_comments(host: str, auth: str, foreign_post_ids: list, time_pr
                     if comment == None or 'id' not in comment:
                         continue
                     comment_dict_list.append(comment)
-            CRUD_remote_comments(host, auth, comment_dict_list)
+        CRUD_remote_comments(host, comment_dict_list)
     except Exception as e:
         print("update_remote_comments exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
         return []
@@ -372,9 +436,16 @@ def update_remote_comments(host: str, auth: str, foreign_post_ids: list, time_pr
 
     return [comment['id'] for comment in comment_dict_list]
 
-def CRUD_remote_comments(host: str, auth: str, comment_dict_list: list):
+def CRUD_remote_comments(host: str, comment_dict_list: list):
     """
     This will create, update or delete comments from a post
+
+    args:
+        host - The host url of the remote node
+        comment_dict_list - The list of comments in private dict form to create, update or delete in our database.
+
+    return:
+        None
     """
     try:
         for comment_dict in comment_dict_list:
@@ -389,7 +460,18 @@ def CRUD_remote_comments(host: str, auth: str, comment_dict_list: list):
         print("CRUD_remote_comments Exception : {}\n\n{}".format(type(e), str(e)))
 
 # Update likes
-def update_remote_likes(host: str, auth: str, foreign_author_ids: list, time_profile = True):
+def update_remote_likes(auth: str, foreign_author_ids: list, time_profile = True):
+    """
+    This will make an API request to the remote host using auth to get all the liked objects from the list of foreign author ids
+
+    args:
+        auth - The authentication information to make request against the remote server
+        foreign_author_ids - The list of author ids to get likes from
+        time_profile - If True will time the execution of this function.
+    
+    return:
+        Return a list of like object id's which is a pair of author id and the object being liked from the remote server
+    """
     try:
         start_time = time.time()
         remote_authors_host = Author.objects.filter(id__in=foreign_author_ids).values_list('url', flat=True)
@@ -425,6 +507,15 @@ def update_remote_likes(host: str, auth: str, foreign_author_ids: list, time_pro
     return [(likes['author'].id, likes['object']) for likes in likes_dict_list]
 
 def CRUD_remote_likes(likes_dict_list: list):
+    """
+    This will create Like entries into our database based on the list of like dict
+
+    args:
+        likes_dict_list - The list of like in private dict form to create from
+
+    return:
+        None
+    """
     try:
         for like_dict in likes_dict_list:
             like, created = Like.objects.get_or_create(
@@ -489,6 +580,9 @@ def CRUD_remote_authors(host: str, author_dict_list: list):
     args:
         host - The host of the remote server/node
         author_dict_list - The list of author in dict form to check the db
+
+    return: 
+        None
     """
     try:
         for author_dict in author_dict_list:
@@ -506,13 +600,18 @@ def update_remote_followers(host: str, auth: str, foreign_author_ids: list, time
     This will make an follower API request to the host using auth to get the list of followers to a remote author and update our database accordingly.
 
     args:
+        host - The remote host to update from
+        auth - The authentication information to connect to the host
+        foreign_author_ids - The list of foreign author ids to update their follower lists
+        time_profile - If True will time the execution of this function.
 
-    return:
+    return: 
+        The list of followers' ids from all the authors from the remote host 
     """
     start_time = time.time()
     try:
         remote_authors_host = Author.objects.filter(id__in=foreign_author_ids).values_list('id','url')
-
+        author_follower_list = []
         with ThreadPoolExecutor(max_workers=1) as pool:
             id = [author[0] for author in remote_authors_host]
             urls = [author[1] + '/followers' for author in remote_authors_host]
@@ -533,8 +632,10 @@ def update_remote_followers(host: str, auth: str, foreign_author_ids: list, time
                     if follower == None:
                         continue
                     follower_dict_list.append(follower)
-                CRUD_remote_authors(author, follower_dict_list)
-            # Add, update or delete posts based on the foreign state
+                author_follower_list.append((author, follower_dict_list))
+            
+        for author, followers in author_follower_list:
+            CRUD_remote_followers(author, followers)
 
     except Exception as e:
         print("update_remote_followers exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
@@ -547,6 +648,13 @@ def update_remote_followers(host: str, auth: str, foreign_author_ids: list, time
 def CRUD_remote_followers(author: Author, follower_dict_list: list):
     """
     This will create, update or delete followers based on the remote responses
+
+    args:
+        author - The author to update the followers on
+        follower_dict_list - The list of followers in private dict form to add to the author's list of followers
+    
+    return: 
+        None
     """
     try:
         for author_dict in follower_dict_list:
