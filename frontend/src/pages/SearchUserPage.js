@@ -24,9 +24,13 @@ const SearchUserPage = (props) => {
   useEffect(() => {
     dispatch(getUsers());
   }, []);
+
   
   const users = userList.response ? userList.response.items : [];
 
+  console.log("search users");
+  console.log(users);
+  
   var searchResultUsers = [];
 
   if(searchText==" "){
