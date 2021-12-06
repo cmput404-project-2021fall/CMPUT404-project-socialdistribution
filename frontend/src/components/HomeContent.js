@@ -26,11 +26,8 @@ function HomeContent() {
   useEffect(() => {
     dispatch(getLikedPosts());
     dispatch(getPosts());
-<<<<<<< HEAD
     dispatch(updateDB());
-=======
     dispatch(getAuthorDetail());
->>>>>>> e3788fb461d50683352dc3e9dd66fbd237843254
   }, []);
 
   const [message, setMessage] = useState("");
