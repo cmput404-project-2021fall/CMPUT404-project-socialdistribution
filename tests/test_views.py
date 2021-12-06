@@ -882,7 +882,7 @@ class InboxViewTest(TestCase):
         put_data = {
             "type":"Follow",
         }
-        put_res = self.client.put("/api/author/2f91a911-850f-4655-ac29-9115822c72b6/followers/2f91a911-850f-4655-ac29-9115822c72b5",data=put_data,follow=True,content_type="application/json",**header)
+        put_res = self.client.put("/api/author/2f91a911-850f-4655-ac29-9115822c72b5/followers/2f91a911-850f-4655-ac29-9115822c72b6",data=put_data,follow=True,content_type="application/json",**header)
         self.assertEqual(put_res.status_code,200)
         self.assertEqual(1,len(inbox.friend_requests.all()))
 

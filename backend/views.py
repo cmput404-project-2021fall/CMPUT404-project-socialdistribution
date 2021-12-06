@@ -321,7 +321,7 @@ class FollowerDetail(APIView):
             return HttpResponseNotFound(json.dumps(resp_dict), content_type='application/json')
         author.followers.add(follower)
 
-        existing_friend_request = get_friend_request(author,follower)
+        existing_friend_request = get_friend_request(follower,author)
         if (existing_friend_request != None):
             existing_friend_request.delete()
 
