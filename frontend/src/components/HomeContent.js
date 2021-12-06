@@ -48,7 +48,7 @@ function HomeContent() {
     dispatch(getLikedPosts());
     dispatch(getPosts());
     dispatch(getAuthorDetail());
-    dispatch(updateDB());
+    // dispatch(updateDB());
   }, []);
 
   const github_url = userDetailInfo ? userDetailInfo : "";
