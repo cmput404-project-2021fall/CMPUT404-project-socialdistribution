@@ -2,6 +2,8 @@
 Current version is deployed and available on:
 https://cmput-404-social-distribution.herokuapp.com/#/
 
+Demo Video: https://youtu.be/CE3Me1_tt88
+
 ## Setup
 
 > Install the package for backend
