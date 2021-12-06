@@ -11,30 +11,34 @@ import {
 } from "react-bootstrap";
 import Posts from "./Posts";
 import { useDispatch, useSelector } from "react-redux";
-import { authorFriendlist } from "../actions/userActions";
+import { authorFriendlist, acceptFriendRequest } from "../actions/userActions";
 import Message from "./Message";
-import { getPosts } from "../actions/postActions";
+import { useHistory } from "react-router-dom";
 
 function NotificationContent(prop) {
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  const userDetail = useSelector((state) => state.userDetail);
-  const { error, loading, userInfo } = userDetail;
+  const acceptFriend = useSelector((state) => state.acceptFriend);
+  const { error, response } = acceptFriend;
 
-  useEffect(() => {
-    if (userInfo == null) {
-      dispatch(authorFriendlist());
+  const acceptRquestHandler = () => {
+    let requester_id = parseId(prop);
+    dispatch(acceptFriendRequest(requester_id));
+    response && window.location.reload();
+  };
+
+  const parseId = (p) => {
+    let idList = p.notification.actor.id.split("/");
+    let id = "";
+    for (let i = 0; i < idList.length; i++) {
+      if (idList[i] == "author") {
+        id = idList[i + 1];
+        break;
+      }
     }
-  }, [dispatch, userInfo]);
-
-  // TODO: this should be user request passed in
-  console.log(prop.notification);
-
-  // handleClick() {
-  //     this.setState(prevState => ({
-  //       isToggleOn: !prevState.isToggleOn
-  //     }));
-  // }
+    return id;
+  };
 
   return (
     <Col md={6}>
@@ -54,8 +58,12 @@ function NotificationContent(prop) {
             <Alert variant="primary">{prop.notification.summary}</Alert>
           )}
           {prop.notification.type == "Follow" ? (
-            <Button className="m-1" variant="success">
-              Follow Back To Be Friends
+            <Button
+              className="m-1"
+              variant="success"
+              onClick={() => acceptRquestHandler()}
+            >
+              Accept
             </Button>
           ) : (
             ""
