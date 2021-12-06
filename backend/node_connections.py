@@ -495,7 +495,7 @@ def update_remote_likes(auth: str, foreign_author_ids: list, time_profile = True
                         continue
                     likes_dict_list.append(likes)
         
-            CRUD_remote_likes(likes_dict_list)
+        CRUD_remote_likes(likes_dict_list)
     except Exception as e:
         print("update_remote_likes exception : {}\n\n{}\n\n{}".format(type(e), str(e), traceback.format_exc()))
 
