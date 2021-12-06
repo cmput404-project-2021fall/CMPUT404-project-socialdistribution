@@ -35,7 +35,7 @@ const SearchResultPage = (props) => {
   var searchResultPosts = [];
 
   // if search empty, then show the whole list of posts
-  if(searchText==" "){
+  if(!searchText || searchText==" "){
     for( var i=0;i<posts.length;i++){ 
       searchResultPosts.push(posts[i]);
     }

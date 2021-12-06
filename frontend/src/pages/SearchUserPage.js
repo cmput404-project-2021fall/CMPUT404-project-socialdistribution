@@ -34,7 +34,7 @@ const SearchUserPage = (props) => {
   var searchResultUsers = [];
 
   // if search empty, then show the whole list of posts
-  if(searchText==" "){
+  if(!searchText || searchText==" "){
     for(var i=0; i<users.length; i++){
         if(users[i].displayName){
             searchResultUsers.push(users[i]);  
